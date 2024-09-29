@@ -6,7 +6,7 @@
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
-                <!-- Sử dụng col để thu nhỏ box và đảm bảo chúng vừa với màn hình -->
+                <!-- Nhiệt độ -->
                 <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-xl-0 mb-4">
                     <div class="card" id="temperature-card">
                         <div class="card-header p-3 pt-2">
@@ -15,7 +15,7 @@
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">Nhiệt độ</p>
-                                <h4 class="mb-0 total-users-count" id="temperature-value">19°C</h4>
+                                <h4 class="mb-0" id="temperature-value">--</h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
@@ -23,7 +23,6 @@
                     </div>
                 </div>
 
-                @if (Auth::user()->level == 'Admin')
                 <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-xl-0 mb-4">
                     <div class="card" id="humidity-card">
                         <div class="card-header p-3 pt-2">
@@ -32,24 +31,25 @@
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">Độ ẩm</p>
-                                <h4 class="mb-0 new-users-count" id="humidity-value">60%</h4>
+                                <h4 class="mb-0" id="humidity-value">--</h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
                         <div class="card-footer p-3"></div>
                     </div>
                 </div>
-                @endif
+                
 
+                <!-- Ánh sáng -->
                 <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-xl-0 mb-4">
                     <div class="card" id="light-card">
                         <div class="card-header p-3 pt-2">
-                            <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                            <div class="icon icon-lg icon-shape bg-gradient-warning shadow-dark text-center border-radius-xl mt-n4 position-absolute">
                                 <i class="material-icons opacity-10">light_mode</i>
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">Ánh sáng</p>
-                                <h4 class="mb-0 total-exercises-count" id="light-value">400 lux</h4>
+                                <h4 class="mb-0" id="light-value">--</h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
@@ -57,6 +57,7 @@
                     </div>
                 </div>
 
+                <!-- Thời gian thực -->
                 <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-xl-0 mb-4">
                     <div class="card">
                         <div class="card-header p-3 pt-2">
@@ -80,7 +81,7 @@
                 <div class="col-md-8">
                     <div class="card">
                         <div class="card-header p-3">
-                            <h6>Biểu đồ các giá trị môi trường</h6>
+                            <h6>Biểu đồ theo dõi môi trường</h6>
                         </div>
                         <div class="card-body d-flex justify-content-center">
                             <div style="width: 100%; max-width: 800px; height: 400px;">
@@ -128,163 +129,154 @@
     <x-plugins></x-plugins>
 </x-layout>
 
-
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Dữ liệu mẫu cho biểu đồ
-            var sampleData = {
-                timestamps: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00"],
-                temperatureData: [22, 23, 25, 28, 30, 29, 26],
-                humidityData: [55, 60, 62, 58, 57, 59, 61],
-                lightData: [300, 350, 400, 450, 420, 380, 390]
-            };
-
-            var ctx = document.getElementById('environmentChart').getContext('2d');
-            var environmentChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: sampleData.timestamps, // Nhãn trên trục X (thời gian)
-                    datasets: [
-                        {
-                            label: 'Nhiệt độ (°C)',
-                            data: sampleData.temperatureData,
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.3)',
-                            borderWidth: 3,
-                            fill: true,  // Make the area below the line filled with color
-                            tension: 0.4,  // Smooth the line
-                            pointRadius: 4,
-                            pointHoverRadius: 6
-                        },
-                        {
-                            label: 'Độ ẩm (%)',
-                            data: sampleData.humidityData,
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            backgroundColor: 'rgba(54, 162, 235, 0.3)',
-                            borderWidth: 3,
-                            fill: true,  // Make the area below the line filled with color
-                            tension: 0.4,  // Smooth the line
-                            pointRadius: 4,
-                            pointHoverRadius: 6
-                        },
-                        {
-                            label: 'Ánh sáng (lux)',
-                            data: sampleData.lightData,
-                            borderColor: 'rgba(255, 206, 86, 1)',
-                            backgroundColor: 'rgba(255, 206, 86, 0.3)',
-                            borderWidth: 3,
-                            fill: true,  // Make the area below the line filled with color
-                            tension: 0.4,  // Smooth the line
-                            pointRadius: 4,
-                            pointHoverRadius: 6
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Thời gian',
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                }
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Giá trị',
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                }
-                            },
-                            beginAtZero: true  // Start the y-axis at zero
-                        }
+<script>
+    $(document).ready(function() {
+        // Tạo biểu đồ với dữ liệu ban đầu
+        var ctx = document.getElementById('environmentChart').getContext('2d');
+        var environmentChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // Sẽ được cập nhật với dữ liệu thời gian thực
+                datasets: [
+                    {
+                        label: 'Nhiệt độ (°C)',
+                        data: [],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.3)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
                     },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            titleFont: {
+                    {
+                        label: 'Độ ẩm (%)',
+                        data: [],
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.3)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    },
+                    {
+                        label: 'Ánh sáng',
+                        data: [],
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        backgroundColor: 'rgba(255, 206, 86, 0.3)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Thời gian',
+                            font: {
                                 size: 14,
                                 weight: 'bold'
-                            },
-                            bodyFont: {
-                                size: 12
+                            }
+                        },
+                        reverse: true
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Giá trị',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14
                             }
                         }
                     },
-                    animation: {
-                        duration: 1000, // 1 second
-                        easing: 'easeInOutCubic'
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 12
+                        }
                     }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutCubic'
+                }
+            }
+        });
+
+        // Hàm để cập nhật dữ liệu cho biểu đồ từ API
+        function updateChartData() {
+            $.ajax({
+                url: '/sensor-data/latest',  // Gọi đến phương thức getLatestData trong controller của bạn
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var timestamps = [];
+                    var temperatureData = [];
+                    var humidityData = [];
+                    var lightData = [];
+
+                    // Lặp qua dữ liệu nhận được từ API và đẩy vào các mảng dữ liệu
+                    response.data.forEach(function(dataPoint) {
+                        // Chuyển đổi timestamp thành định dạng mong muốn
+                        const date = new Date(dataPoint.received_at);
+                        const formattedTimestamp = 
+                            `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')} ` +
+                            `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+
+                        timestamps.push(formattedTimestamp);  // Thời gian nhận dữ liệu đã định dạng
+                        temperatureData.push(dataPoint.temperature);  // Nhiệt độ
+                        humidityData.push(dataPoint.humidity);  // Độ ẩm
+                        lightData.push(dataPoint.light);  // Ánh sáng
+                    });
+
+
+                    // Cập nhật dữ liệu cho biểu đồ
+                    environmentChart.data.labels = timestamps;
+                    environmentChart.data.datasets[0].data = temperatureData;
+                    environmentChart.data.datasets[1].data = humidityData;
+                    environmentChart.data.datasets[2].data = lightData;
+
+                    // Cập nhật lại biểu đồ
+                    environmentChart.update();
+                },
+                error: function(error) {
+                    console.log('Lỗi khi lấy dữ liệu từ API:', error);
                 }
             });
+        }
 
-            // Hàm cập nhật thời gian thực
-            function updateClock() {
-                var now = new Date();
-                var hours = now.getHours().toString().padStart(2, '0');
-                var minutes = now.getMinutes().toString().padStart(2, '0');
-                var seconds = now.getSeconds().toString().padStart(2, '0');
-                var currentTime = `${hours}:${minutes}:${seconds}`;
-                $('#realTimeClock').text(currentTime);
-            }
+        // Gọi hàm updateChartData mỗi 2 giây để cập nhật biểu đồ liên tục
+        setInterval(updateChartData, 2000);
 
-            // Cập nhật đồng hồ mỗi giây
-            setInterval(updateClock, 1000);
-
-            // Hàm cập nhật màu của các box chứa giá trị môi trường
-            function updateBoxColors() {
-                // Nhiệt độ
-                var temperature = parseInt($('#temperature-value').text());
-                if (temperature < 20) {
-                    $('#temperature-card').css('background-color', '#85C1E9'); // Xanh da trời
-                } else if (temperature >= 20 && temperature < 30) {
-                    $('#temperature-card').css('background-color', '#ABEBC6'); // Xanh lá cây
-                } else {
-                    $('#temperature-card').css('background-color', '#F1948A'); // Đỏ nhạt
-                }
-
-                // Độ ẩm
-                var humidity = parseInt($('#humidity-value').text());
-                if (humidity < 40) {
-                    $('#humidity-card').css('background-color', '#AED6F1'); // Xanh nhạt
-                } else if (humidity >= 40 && humidity < 70) {
-                    $('#humidity-card').css('background-color', '#A9DFBF'); // Xanh lá nhạt
-                } else {
-                    $('#humidity-card').css('background-color', '#F5B7B1'); // Đỏ nhạt
-                }
-
-                // Ánh sáng
-                var light = parseInt($('#light-value').text());
-                if (light < 300) {
-                    $('#light-card').css('background-color', '#F9E79F'); // Vàng nhạt
-                } else if (light >= 300 && light < 600) {
-                    $('#light-card').css('background-color', '#FAD7A0'); // Cam nhạt
-                } else {
-                    $('#light-card').css('background-color', '#F5B7B1'); // Đỏ nhạt
-                }
-            }
-
-            // Cập nhật màu mỗi khi trang được tải
-            updateBoxColors();
-        });
-    </script>
+        // Gọi hàm ngay khi trang vừa tải
+        updateChartData();
+    });
+</script>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
     $(document).ready(function() {
@@ -452,3 +444,80 @@
         border-bottom: 1px solid #dee2e6; /* Đường viền dưới mỗi hàng */
     }
 </style>
+
+<script>
+    function fetchLatestSensorData() {
+        // Gọi API để lấy dữ liệu mới nhất
+        fetch('/sensor-data/latest')
+            .then(response => response.json())
+            .then(data => {
+                if (data.data.length > 0) {
+                    const latestData = data.data[0]; // Lấy dữ liệu mới nhất
+
+                    // Cập nhật các giá trị nhiệt độ, độ ẩm, ánh sáng
+                    document.getElementById('temperature-value').innerText = latestData.temperature + '°C';
+                    document.getElementById('humidity-value').innerText = parseInt(latestData.humidity) + '%';
+                    document.getElementById('light-value').innerText = latestData.light;
+                }
+            })
+            .catch(error => console.error('Error fetching sensor data:', error));
+    }
+
+
+    // Gọi hàm fetchLatestSensorData mỗi 2 giây để cập nhật dữ liệu
+    setInterval(fetchLatestSensorData, 2000);
+    // Hàm cập nhật thời gian thực
+    function updateClock() {
+        var now = new Date();
+        var hours = now.getHours().toString().padStart(2, '0');
+        var minutes = now.getMinutes().toString().padStart(2, '0');
+        var seconds = now.getSeconds().toString().padStart(2, '0');
+        var currentTime = `${hours}:${minutes}:${seconds}`;
+        $('#realTimeClock').text(currentTime);
+    }
+
+    // Cập nhật đồng hồ mỗi giây
+    setInterval(updateClock, 1000);
+    // Gọi hàm ngay lập tức khi trang load
+    fetchLatestSensorData();
+</script>
+
+<script>
+    // Hàm cập nhật màu của các box chứa giá trị môi trường
+    function updateBoxColors() {
+        // Nhiệt độ
+        var temperature = parseInt($('#temperature-value').text());
+        if (temperature < 20) {
+            $('#temperature-card').css('background-color', '#00FFFF'); // Xanh dương
+        } else if (temperature >= 20 && temperature < 35) {
+            $('#temperature-card').css('background-color', '#00FF00'); // Xanh lá
+        } else {
+            $('#temperature-card').css('background-color', '#FF0000'); // Đỏ
+        }
+
+        // Độ ẩm
+        var humidity = parseInt($('#humidity-value').text());
+        if (humidity < 50) {
+            $('#humidity-card').css('background-color', '#00FF00');   
+        } else if (humidity >= 50 && humidity < 80) {
+            $('#humidity-card').css('background-color', '#FFFF00');
+        } else { 
+            $('#humidity-card').css('background-color', '#FF0000'); 
+        }
+
+        // Ánh sáng
+        var light = parseInt($('#light-value').text());
+        if (light < 2500) {
+            $('#light-card').css('background-color', '#FF0000');
+        } else if (light >= 2500 && light <= 3500) {
+            $('#light-card').css('background-color', '#00FF00');
+        } else {
+            $('#light-card').css('background-color', '#FFFF00');
+        }
+    }
+
+    // Cập nhật màu mỗi khi trang được tải
+    updateBoxColors(); 
+    // Gọi hàm updateBoxColors mỗi 2 giây để cập nhật màu sắc liên tục
+    setInterval(updateBoxColors, 2000);
+</script>

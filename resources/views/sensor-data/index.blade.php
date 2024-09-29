@@ -9,7 +9,7 @@
                 <div class="col-12">
                     <div class="card my-4">
                         <div class="d-flex justify-content-between align-items-center p-3">
-                            <h6 class="mb-0">Lịch sử</h6>
+                            <h6 class="mb-0">Bảng theo dõi các giá trị môi trường</h6>
                             <div class="ms-md-auto pe-md-3">
                                 <div class="input-group input-group-outline">
                                     <label class="form-label">Tìm kiếm</label>
@@ -42,19 +42,12 @@
                                                 THỜI GIAN
                                                 <span class="sort-btn" data-sort="time">▲▼</span>
                                             </th>
-                                            <th class="text-secondary opacity-7"></th>
                                         </tr>
                                     </thead>
                                     <tbody id="table-body">
-                                        @foreach ($sensorData as $data)
+                                        @foreach($sensorData as $index => $data)
                                         <tr>
-                                            <td>
-                                                <div class="d-flex px-2 py-1">
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <p class="mb-0 text-sm">{{ $data->id }} </p>
-                                                    </div>
-                                                </div>
-                                            </td>
+                                            <td>{{ $sensorData->firstItem() + $index }}</td>
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div class="d-flex flex-column justify-content-center">
@@ -69,11 +62,11 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">{{ $data->light }}</h6>
+                                                    <h6 class="mb-0 text-sm">{{ $data->light }} Lux</h6>
                                                 </div>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <p class="text-xs text-secondary mb-0">{{ $data->received_at->format('H:i:s d-m-Y') }}</p>
+                                                <p class="text-xs text-secondary mb-0">{{ \Carbon\Carbon::parse($data->received_at)->format('H:i:s d-m-Y') }}</p>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -81,20 +74,10 @@
                                 </table>
                             </div>
                         </div>
-                        <!-- Giả định phân trang, nếu cần -->
-                        <nav aria-label="...">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item disabled">
-                                    <span class="page-link">Trước</span>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Sau</a>
-                                </li>
-                            </ul>
-                        </nav>
+                        <!-- Hiển thị phân trang -->
+                        <div class="d-flex justify-content-center">
+                            {{ $sensorData->links('pagination::bootstrap-4') }} <!-- Hiển thị các liên kết phân trang -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -161,3 +144,55 @@
         }
     });
 </script>
+
+<script>
+    function fetchLatestData() {
+        fetch('/sensor-data/latest')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('table-body');
+                const paginationContainer = document.getElementById('pagination-container'); // Đảm bảo có phần tử này trong HTML
+                
+                tableBody.innerHTML = ''; // Xóa nội dung cũ
+                data.data.forEach((item, index) => {
+                    const date = new Date(item.received_at);
+                    const formattedDate = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')} ${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+
+                    const row = `
+                        <tr>
+                            <td>${data.from + index}</td>
+                            <td>
+                                <div class="d-flex px-2 py-1">
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <h6 class="mb-0 text-sm">${item.temperature}°C</h6>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${item.humidity}%</h6>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${item.light}</h6>
+                                </div>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <p class="text-xs text-secondary mb-0">${formattedDate}</p>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+
+                // Cập nhật phân trang
+                paginationContainer.innerHTML = data.links.map(link => `<a href="${link.url}">${link.label}</a>`).join('');
+            })
+            .catch(error => console.error('Error fetching latest data:', error));
+    }
+
+    // Gọi hàm cập nhật mỗi 2 giây
+    setInterval(fetchLatestData, 2000);
+</script>
+

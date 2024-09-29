@@ -48,10 +48,6 @@ class ProfileController extends Controller
         $user->update($attributes);
         return back()->withStatus('Cập nhật thông tin thành công');
     }
-    public function index()
-    {
-        $users = User::paginate(5); 
-        return view('pages.user.user-management', ['users' => $users]);
-    }
+    
 
 }

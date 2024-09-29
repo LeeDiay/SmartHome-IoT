@@ -50,7 +50,7 @@ class ControlController extends Controller
                 $message = $device->status ? "on" : "off"; // Nếu thiết bị bật thì gửi "on", ngược lại gửi "off"
 
                 // Gửi tin nhắn đến topic MQTT
-                if ($mqtt->publish($topic, $message, 0)) {
+                if (!$mqtt->publish($topic, $message, 0)) {
                     \Log::info("Message published to $topic: " . $message);
                 } else {
                     \Log::error("Failed to publish message to $topic");
