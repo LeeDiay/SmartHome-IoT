@@ -8,44 +8,28 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card my-4">
-                    <div class="d-flex justify-content-between align-items-center p-3">
-                            <h6 class="mb-0">Lịch sử</h6>
-                            <div class="ms-md-auto pe-md-3">
-                                <div class="input-group input-group-outline">
-                                    <label class="form-label">Tìm kiếm</label>
-                                    <input id="search-input" type="text" class="form-control">
-                                </div>
-                            </div>
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2"></div>
+                        <div class="me-3 my-3 text-end">
+                            <button type="button" class="btn bg-gradient-primary mb-0 addDataModal" data-bs-toggle="modal" data-bs-target="#addDataModal">
+                                <i class="material-icons text-sm">add</i>&nbsp;&nbsp;Thêm dữ liệu mới
+                            </button>
                         </div>
+
                         <div class="card-body px-0 pb-2">
                             <div class="table-responsive p-0">
                                 <table class="table align-items-center mb-0">
                                     <thead>
                                         <tr>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                ID
-                                                <span class="sort-btn" data-sort="id">▲▼</span>
-                                            </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                NHIỆT ĐỘ
-                                                <span class="sort-btn" data-sort="temperature">▲▼</span>
-                                            </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                ĐỘ ẨM
-                                                <span class="sort-btn" data-sort="humidity">▲▼</span>
-                                            </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                ÁNH SÁNG
-                                                <span class="sort-btn" data-sort="light">▲▼</span>
-                                            </th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                THỜI GIAN
-                                                <span class="sort-btn" data-sort="time">▲▼</span>
-                                            </th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">NHIỆT ĐỘ</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ĐỘ ẨM</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ÁNH SÁNG</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">THỜI GIAN</th>
                                             <th class="text-secondary opacity-7"></th>
                                         </tr>
                                     </thead>
-                                    <tbody id="table-body">
+                                    <tbody>
+                                        <!-- 12 Dòng dữ liệu mẫu -->
                                         @foreach (range(1, 12) as $index)
                                         <tr>
                                             <td>
@@ -85,13 +69,13 @@
                         <nav aria-label="...">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item disabled">
-                                    <span class="page-link">Trước</span>
+                                    <span class="page-link">Previous</span>
                                 </li>
                                 <li class="page-item active"><a class="page-link" href="#">1</a></li>
                                 <li class="page-item"><a class="page-link" href="#">2</a></li>
                                 <li class="page-item"><a class="page-link" href="#">3</a></li>
                                 <li class="page-item">
-                                    <a class="page-link" href="#">Sau</a>
+                                    <a class="page-link" href="#">Next</a>
                                 </li>
                             </ul>
                         </nav>
@@ -103,61 +87,3 @@
     </main>
     <x-plugins></x-plugins>
 </x-layout>
-
-<!-- JavaScript -->
-<script>
-    $(document).ready(function() {
-        // Tìm kiếm
-        $('#search-input').on('keyup', function() {
-            var value = $(this).val().toLowerCase();
-            $('#table-body tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-            });
-        });
-
-        // Sắp xếp
-        $('.sort-btn').on('click', function() {
-            var rows = $('#table-body tr').get();
-            var sortColumn = $(this).data('sort');
-            var sortOrder = $(this).data('order') === 'asc' ? 'desc' : 'asc';
-            $(this).data('order', sortOrder);
-
-            rows.sort(function(a, b) {
-                var A = getCellValue(a, sortColumn);
-                var B = getCellValue(b, sortColumn);
-
-                if ($.isNumeric(A) && $.isNumeric(B)) {
-                    return sortOrder === 'asc' ? A - B : B - A;
-                } else {
-                    return sortOrder === 'asc' ? A.localeCompare(B) : B.localeCompare(A);
-                }
-            });
-
-            $.each(rows, function(index, row) {
-                $('#table-body').append(row);
-            });
-        });
-
-        function getCellValue(row, sortColumn) {
-            var cellIndex;
-            switch (sortColumn) {
-                case 'id':
-                    cellIndex = 0;
-                    break;
-                case 'temperature':
-                    cellIndex = 1;
-                    break;
-                case 'humidity':
-                    cellIndex = 2;
-                    break;
-                case 'light':
-                    cellIndex = 3;
-                    break;
-                case 'time':
-                    cellIndex = 4;
-                    break;
-            }
-            return $(row).children('td').eq(cellIndex).text().trim();
-        }
-    });
-</script>

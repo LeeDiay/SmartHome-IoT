@@ -14,7 +14,7 @@
                 <div class="row gx-4 mb-2">
                     <div class="col-auto">
                         <div class="avatar avatar-xl position-relative">
-                            <img src="assets/img/avatar_user/{{ auth()->user()->avatar}}" class="w-100 border-radius-lg shadow-sm">
+                            <img src="assets/img/avatar_user/{{ auth()->user()->avatar}}" class="w-150 border-radius-lg shadow-sm">
                         </div>
                     </div>
                     <div class="col-auto my-auto">
@@ -53,6 +53,11 @@
                             @csrf
                             <div class="row">
                                 
+                            <div class="mb-3 col-md-6">
+                                    <label class="form-label">Mã sinh viên</label>
+                                    <input  class="form-control border border-2 p-2" value='B21DCAT026'>
+                                    
+                                </div>
                                 <div class="mb-3 col-md-6">
                                     <label class="form-label">Email</label>
                                     <input type="email" name="email" class="form-control border border-2 p-2" value='{{ old('email', auth()->user()->email) }}'>
@@ -84,9 +89,16 @@
                                         <p class='text-danger inputerror'>{{ $message }} </p>
                                     @enderror
                                 </div>
+                                <div class="mb-3 col-md-6">
+                                    <label class="form-label">Github</label>
+                                    <input  class="form-control border border-2 p-2" value='https://github.com/LeeDiay'>
+                                    @error('location')
+                                        <p class='text-danger inputerror'>{{ $message }} </p>
+                                    @enderror
+                                </div>
                                 
                                 <div class="mb-3 col-md-12">
-                                    <label for="floatingTextarea2">Giới thiệu</label>
+                                    <label for="floatingTextarea2">Lớp</label>
                                     <textarea class="form-control border border-2 p-2"
                                         placeholder=" Nói gì đó về bản thân..." id="floatingTextarea2" name="about"
                                         rows="4" cols="50">{{ old('about', auth()->user()->about) }}</textarea>

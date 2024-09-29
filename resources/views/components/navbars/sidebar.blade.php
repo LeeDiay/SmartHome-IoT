@@ -7,8 +7,8 @@
         <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
             aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand m-0 d-flex text-wrap align-items-center" href=" {{ route('dashboard') }}">
-            <img src="{{ asset('assets') }}/img/vcslogo.png" class="navbar-brand-img h-100" alt="main_logo">
-            <span class="ms-2 font-weight-bold text-white">Hệ thống quản lí học tập VCS</span>
+            <img src="{{ asset('assets') }}/img/Logo_PTIT_University.png" class="navbar-brand-img h-100" alt="main_logo">
+            <span class="ms-2 font-weight-bold text-white">Smart Home PTIT</span>
         </a>
     </div>
     <hr class="horizontal light mt-0 mb-2">
@@ -33,7 +33,27 @@
                     <span class="nav-link-text ms-1">Trang chủ</span>
                 </a>
             </li>
-
+            <li class="nav-item">
+                <a class="nav-link text-white {{ $activePage == 'device.history' ? ' active bg-gradient-primary' : '' }} "
+                    href="{{ route('device-history.index') }}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">devices</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Lịch sử</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white {{ $activePage == 'user-management' ? ' active bg-gradient-primary' : '' }} "
+                    href="{{ route('user-management') }}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">history</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Data Sensor</span>
+                </a>
+            </li>
+            
+            
+           
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Tài khoản</h6>
             </li>
@@ -41,53 +61,20 @@
                 <a class="nav-link text-white {{ $activePage == 'user-profile' ? 'active bg-gradient-primary' : '' }} "
                     href="{{ route('user-profile') }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i style="font-size: 1.2rem;" class="fas fa-user-circle ps-2 pe-2 text-center"></i>
+                        <i style="font-size: 1.2rem;" class="material-icons ps-2 pe-2 text-center">person</i>
                     </div>
                     <span class="nav-link-text ms-1">Trang cá nhân</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'user-management' ? ' active bg-gradient-primary' : '' }} "
-                    href="{{ route('user-management') }}">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center"></i>
-                    </div>
-                    <span class="nav-link-text ms-1">Danh sách sinh viên</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'change-password' ? 'active bg-gradient-primary' : '' }}" href="{{ route('change-password') }}">
+                <a class="nav-link text-white {{ $activePage == 'change-password' ? 'active bg-gradient-primary' : '' }}"
+                    href="{{ route('change-password') }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i style="font-size: 1.2rem;" class="material-icons ps-2 pe-2 text-center">vpn_key</i>
                     </div>
                     <span class="nav-link-text ms-1">Đổi mật khẩu</span>
                 </a>
             </li>
-
-            <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Học tập</h6>
-            </li>
-            
-            <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'exercises-management' ? ' active bg-gradient-primary' : '' }} "
-                    href="{{ route('exercises-management') }}">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">library_books</i>
-                    </div>
-                    <span class="nav-link-text ms-1">Danh sách bài tập</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link text-white {{ $activePage == 'quiz-management' ? ' active bg-gradient-primary' : '' }} "
-                    href="{{ route('quiz-management') }}">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">quiz</i>
-                    </div>
-                    <span class="nav-link-text ms-1">Câu đố</span>
-                </a>
-            </li>
-
         </ul>
     </div>
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">

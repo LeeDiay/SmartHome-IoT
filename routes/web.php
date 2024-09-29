@@ -9,7 +9,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\MessageController;
-
+use App\Http\Controllers\ControlController;
+use App\Http\Controllers\LedController;
+use App\Http\Controllers\MQTTController;
+use App\Http\Controllers\DeviceHistoryController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,31 +52,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/new-users-count', [UserController::class, 'getNewUsersCount']);
 	Route::get('/total-users-count', [UserController::class, 'getTotalUsersCount']);
 
-	// exercise route
-	Route::get('exercises-management', [ExerciseController::class, 'index'])->name('exercises-management');
-	Route::post('/exercises-store', [ExerciseController::class, 'store'])->name('exercises.store');
-	Route::post('/exercises-update', [ExerciseController::class, 'update'])->name('exercises.update');
-	Route::post('/exercises-submit', [ExerciseController::class, 'submit'])->name('exercises.submit');
-	// Route::get('/get-submit', [ExerciseController::class, 'getSubmittedExercises'])->name('get.submit');
-	Route::get('/exercise/{exerciseId}/submitted', [ExerciseController::class, 'getSubmittedExercises'])->name('get.submit');
-
-
-	Route::delete('/exercises-delete', [ExerciseController::class, 'destroy'])->name('exercises.delete');
-	Route::get('/total-exercises-count', [ExerciseController::class, 'getTotalExercisesCount']);
-
-	//quiz route
-	Route::get('quiz-management', [QuizController::class, 'index'])->name('quiz-management');
-	Route::post('/quiz-store', [QuizController::class, 'store'])->name('quiz.store');
-	Route::post('/quiz-update', [QuizController::class, 'update'])->name('quiz.update');
-	Route::delete('/quiz-delete', [QuizController::class, 'destroy'])->name('quiz.delete');
-	Route::post('/quiz-submit', [QuizController::class, 'submit'])->name('quiz.submit');
-	Route::get('/total-quizzes-count', [QuizController::class, 'getTotalQuizzesCount']);
-
-	//message route
-	Route::get('/messages', [MessageController::class, 'index'])->name('messages');
-	Route::post('/message-send', [MessageController::class, 'send'])->name('message.send');
-	Route::get('/message-history', [MessageController::class, 'getMessageHistory'])->name('message.history');
-	Route::get('/new-messages-count', [MessageController::class, 'getNewMessagesCount']);
+	
 
 	Route::get('static-sign-in', function () {
 		return view('pages.static-sign-in');
@@ -83,3 +62,9 @@ Route::group(['middleware' => 'auth'], function () {
 	})->name('static-sign-up');
 
 });
+
+Route::post('/control/toggle-device', [ControlController::class, 'toggleDevice']);
+Route::post('/control-device/{id}', [DeviceController::class, 'toggle']);
+
+// Route::get('/device-history', [DeviceHistoryController::class, 'index'])->name('device.history');
+Route::get('/device-history', [DeviceHistoryController::class, 'index'])->name('device-history.index');
