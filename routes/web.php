@@ -6,13 +6,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ExerciseController;
-use App\Http\Controllers\QuizController;
-use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ControlController;
-use App\Http\Controllers\LedController;
 use App\Http\Controllers\MQTTController;
 use App\Http\Controllers\DeviceHistoryController;
+use App\Http\Controllers\SensorDataController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,11 +46,7 @@ Route::group(['middleware' => 'auth'], function () {
 		return view('pages.user.change-password');
 	})->name('change-password');
 	Route::post('/change-password', [UserController::class, 'changePassword']);
-	Route::get('/new-users-count', [UserController::class, 'getNewUsersCount']);
-	Route::get('/total-users-count', [UserController::class, 'getTotalUsersCount']);
-
 	
-
 	Route::get('static-sign-in', function () {
 		return view('pages.static-sign-in');
 	})->name('static-sign-in');
@@ -68,3 +61,7 @@ Route::post('/control-device/{id}', [DeviceController::class, 'toggle']);
 
 // Route::get('/device-history', [DeviceHistoryController::class, 'index'])->name('device.history');
 Route::get('/device-history', [DeviceHistoryController::class, 'index'])->name('device-history.index');
+
+Route::get('/sensor-data', [SensorDataController::class, 'index'])->name('sensor.data.index');
+Route::get('/sensor-data/latest', [SensorDataController::class, 'getLatestData'])->name('sensor.data.latest');
+Route::get('/sensor-data/filter', [SensorDataController::class, 'filterData'])->name('sensor.data.filter');

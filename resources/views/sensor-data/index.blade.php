@@ -1,5 +1,5 @@
 <x-layout bodyClass="g-sidenav-show bg-gray-200">
-    <x-navbars.sidebar activePage="user-management"></x-navbars.sidebar>
+    <x-navbars.sidebar activePage="sensor.data"></x-navbars.sidebar>
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <!-- Navbar -->
         <x-navbars.navs.auth titlePage="Danh sách giá trị môi trường"></x-navbars.navs.auth>
@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card my-4">
-                    <div class="d-flex justify-content-between align-items-center p-3">
+                        <div class="d-flex justify-content-between align-items-center p-3">
                             <h6 class="mb-0">Lịch sử</h6>
                             <div class="ms-md-auto pe-md-3">
                                 <div class="input-group input-group-outline">
@@ -46,34 +46,34 @@
                                         </tr>
                                     </thead>
                                     <tbody id="table-body">
-                                        @foreach (range(1, 12) as $index)
+                                        @foreach ($sensorData as $data)
                                         <tr>
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <p class="mb-0 text-sm">{{ $index }}</p>
+                                                        <p class="mb-0 text-sm">{{ $data->id }} </p>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">{{ rand(20, 30) }}°C</h6>
+                                                        <h6 class="mb-0 text-sm">{{ $data->temperature }}°C</h6>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">{{ rand(50, 70) }}%</h6>
+                                                    <h6 class="mb-0 text-sm">{{ $data->humidity }}%</h6>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">{{ rand(200, 400) }} Lux</h6>
+                                                    <h6 class="mb-0 text-sm">{{ $data->light }}</h6>
                                                 </div>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <p class="text-xs text-secondary mb-0">{{ now()->subMinutes($index * 10)->format('Y-m-d H:i:s') }}</p>
+                                                <p class="text-xs text-secondary mb-0">{{ $data->received_at->format('H:i:s d-m-Y') }}</p>
                                             </td>
                                         </tr>
                                         @endforeach
