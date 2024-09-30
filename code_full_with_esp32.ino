@@ -3,14 +3,14 @@
 #include <DHT.h>
 
 // Thông tin WiFi
-const char* ssid = "John_Beo";
-const char* password = "johnbeo123";
+const char* ssid = "your-wifi-name";
+const char* password = "your-wifi-password";
 
 // Thông tin MQTT
-const char* mqtt_server = "192.168.2.105";   // Địa chỉ IP của broker
-const int mqtt_port = 4444;                  // Cổng của broker
-const char* mqtt_user = "leducanh";         // Username MQTT
-const char* mqtt_pass = "b21dcat026";       // Password MQTT
+const char* mqtt_server = "Your-Broker-IP";   // Địa chỉ IP của broker
+const int mqtt_port = your-broker-port;                  // Cổng của broker
+const char* mqtt_user = "your-mqtt-username";         // Username MQTT
+const char* mqtt_pass = "your-mqtt-password";       // Password MQTT
 
 // Định nghĩa chân cho DHT11 và LDR
 #define DHTPIN 4            // Chân kết nối DHT11
