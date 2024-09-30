@@ -36,7 +36,7 @@ class ControlController extends Controller
             $connectionSettings = (new ConnectionSettings)
                 ->setUsername(env('MQTT_USERNAME'))
                 ->setPassword(env('MQTT_PASSWORD'))
-                ->setUseTls(false); // Nếu bạn đang kết nối qua TLS
+                ->setUseTls(true); // Nếu bạn đang kết nối qua TLS
 
             try {
                 // Kết nối đến broker

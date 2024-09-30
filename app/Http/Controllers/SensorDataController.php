@@ -25,17 +25,38 @@ class SensorDataController extends Controller
 
     public function filterData(Request $request)
     {
-        // Lọc dữ liệu dựa trên các tham số truyền vào từ request (ví dụ khoảng thời gian)
+        // Lấy các tham số từ request
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        $sortBy = $request->input('sort_by'); // ánh sáng, nhiệt độ, độ ẩm
+        $sortOrder = $request->input('sort_order', 'asc'); // tăng dần hoặc giảm dần (mặc định là asc)
 
-        // Lọc dữ liệu trong khoảng thời gian được chỉ định
-        $filteredData = SensorDataHistory::whereBetween('received_at', [$startDate, $endDate])->get();
+        // Tạo query ban đầu
+        $query = SensorDataHistory::query();
 
-        // Trả về view (hoặc JSON)
-        return view('sensor_data.filtered', compact('filteredData'));
+        // Lọc theo khoảng thời gian (nếu có)
+        if ($startDate && $endDate) {
+            $query->whereBetween('received_at', [$startDate, $endDate]);
+        }
 
-        // Hoặc trả về JSON (nếu sử dụng cho API)
-        // return response()->json($filteredData);
+        // Lọc theo các thuộc tính đã chọn
+        if ($sortBy && is_array($sortBy)) {
+            foreach ($sortBy as $column) {
+                $query->orWhereNotNull($column); // Lọc không null nếu cần, bạn có thể tùy chỉnh điều kiện này
+            }
+        }
+
+        // Thêm sắp xếp theo cột và thứ tự (nếu có)
+        if ($sortBy) {
+            $query->orderBy($sortBy[0], $sortOrder); // Sắp xếp theo cột đầu tiên trong mảng
+        }
+
+        // Lấy dữ liệu đã lọc
+        $filteredData = $query->paginate(10);
+
+        // Trả về JSON cho frontend xử lý
+        return response()->json($filteredData);
     }
+
+
 }

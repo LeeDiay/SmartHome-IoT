@@ -76,7 +76,7 @@
             </div>
 
             <!-- Sử dụng flexbox để sắp xếp biểu đồ và box điều khiển thiết bị -->
-            <div class="row mt-5 d-flex">
+            <div class="row mt-5     d-flex">
                 <!-- Biểu đồ hiển thị giá trị môi trường -->
                 <div class="col-md-8">
                     <div class="card">
@@ -84,7 +84,7 @@
                             <h6>Biểu đồ theo dõi môi trường</h6>
                         </div>
                         <div class="card-body d-flex justify-content-center">
-                            <div style="width: 100%; max-width: 800px; height: 400px;">
+                            <div style="width: 100%; max-width: 1000px; height: 509px;">
                                 <canvas id="environmentChart"></canvas>
                             </div>
                         </div>

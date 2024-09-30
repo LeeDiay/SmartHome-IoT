@@ -12,36 +12,21 @@
                             <h6 class="mb-0">Bảng theo dõi các giá trị môi trường</h6>
                             <div class="ms-md-auto pe-md-3">
                                 <div class="input-group input-group-outline">
-                                    <label class="form-label">Tìm kiếm</label>
-                                    <input id="search-input" type="text" class="form-control">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Tìm kiếm</button>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body px-0 pb-2">
+                            <div id="searchInfo" class="alert alert-info" style="display: none;"></div>
                             <div class="table-responsive p-0">
                                 <table class="table align-items-center mb-0">
                                     <thead>
                                         <tr>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                ID
-                                                <span class="sort-btn" data-sort="id">▲▼</span>
-                                            </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                NHIỆT ĐỘ
-                                                <span class="sort-btn" data-sort="temperature">▲▼</span>
-                                            </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                ĐỘ ẨM
-                                                <span class="sort-btn" data-sort="humidity">▲▼</span>
-                                            </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                ÁNH SÁNG
-                                                <span class="sort-btn" data-sort="light">▲▼</span>
-                                            </th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                THỜI GIAN
-                                                <span class="sort-btn" data-sort="time">▲▼</span>
-                                            </th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">NHIỆT ĐỘ</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ĐỘ ẨM</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ÁNH SÁNG</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">THỜI GIAN</th>
                                         </tr>
                                     </thead>
                                     <tbody id="table-body">
@@ -84,68 +69,45 @@
             <x-footers.auth></x-footers.auth>
         </div>
     </main>
+    <!-- Modal -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">Lọc và Sắp xếp</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="sortOrder" class="form-label">Sắp xếp theo</label>
+                        <select id="sortOrder" class="form-select">
+                            <option value="asc">Tăng dần</option>
+                            <option value="desc">Giảm dần</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="filterBy" class="form-label">Lọc theo</label>
+                        <select id="filterBy" class="form-select" multiple>
+                            <option value="light">Ánh sáng</option>
+                            <option value="temperature">Nhiệt độ</option>
+                            <option value="humidity">Độ ẩm</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="confirmFilter">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <x-plugins></x-plugins>
 </x-layout>
 
-<!-- JavaScript -->
 <script>
-    $(document).ready(function() {
-        // Tìm kiếm
-        $('#search-input').on('keyup', function() {
-            var value = $(this).val().toLowerCase();
-            $('#table-body tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-            });
-        });
+    let fetchInterval;
 
-        // Sắp xếp
-        $('.sort-btn').on('click', function() {
-            var rows = $('#table-body tr').get();
-            var sortColumn = $(this).data('sort');
-            var sortOrder = $(this).data('order') === 'asc' ? 'desc' : 'asc';
-            $(this).data('order', sortOrder);
-
-            rows.sort(function(a, b) {
-                var A = getCellValue(a, sortColumn);
-                var B = getCellValue(b, sortColumn);
-
-                if ($.isNumeric(A) && $.isNumeric(B)) {
-                    return sortOrder === 'asc' ? A - B : B - A;
-                } else {
-                    return sortOrder === 'asc' ? A.localeCompare(B) : B.localeCompare(A);
-                }
-            });
-
-            $.each(rows, function(index, row) {
-                $('#table-body').append(row);
-            });
-        });
-
-        function getCellValue(row, sortColumn) {
-            var cellIndex;
-            switch (sortColumn) {
-                case 'id':
-                    cellIndex = 0;
-                    break;
-                case 'temperature':
-                    cellIndex = 1;
-                    break;
-                case 'humidity':
-                    cellIndex = 2;
-                    break;
-                case 'light':
-                    cellIndex = 3;
-                    break;
-                case 'time':
-                    cellIndex = 4;
-                    break;
-            }
-            return $(row).children('td').eq(cellIndex).text().trim();
-        }
-    });
-</script>
-
-<script>
     function fetchLatestData() {
         fetch('/sensor-data/latest')
             .then(response => response.json())
@@ -175,7 +137,7 @@
                             </td>
                             <td>
                                 <div class="d-flex flex-column justify-content-center">
-                                    <h6 class="mb-0 text-sm">${item.light}</h6>
+                                    <h6 class="mb-0 text-sm">${item.light} Lux</h6>
                                 </div>
                             </td>
                             <td class="align-middle text-center text-sm">
@@ -192,7 +154,62 @@
             .catch(error => console.error('Error fetching latest data:', error));
     }
 
-    // Gọi hàm cập nhật mỗi 2 giây
-    setInterval(fetchLatestData, 2000);
-</script>
+    // Khởi tạo và gọi hàm cập nhật mỗi 2 giây
+    fetchInterval = setInterval(fetchLatestData, 2000);
 
+    document.getElementById('confirmFilter').addEventListener('click', function() {
+        const sortOrder = document.getElementById('sortOrder').value;
+        const filterBySelect = document.getElementById('filterBy');
+        const selectedFilters = Array.from(filterBySelect.selectedOptions).map(option => option.value);
+        
+        // Hiển thị thông tin tìm kiếm
+        document.getElementById('searchInfo').innerText = `Đang tìm kiếm theo: ${selectedFilters.join(', ')} (${sortOrder})`;
+        document.getElementById('searchInfo').style.display = 'block';
+
+        // Tạm dừng việc gọi hàm fetchLatestData
+        clearInterval(fetchInterval);
+
+        // Gửi yêu cầu lọc dữ liệu
+        fetch('/sensor-data/filter', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Thêm token CSRF
+            },
+            body: JSON.stringify({
+                sort_by: selectedFilters, // Gửi danh sách lọc
+                sort_order: sortOrder
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = ''; // Xóa nội dung cũ
+            data.data.forEach((item, index) => {
+                const date = new Date(item.received_at);
+                const formattedDate = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')} ${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+
+                const row = `
+                    <tr>
+                        <td>${data.from + index}</td>
+                        <td>${item.temperature}°C</td>
+                        <td>${item.humidity}%</td>
+                        <td>${item.light} Lux</td>
+                        <td class="align-middle text-center text-sm">
+                            <p class="text-xs text-secondary mb-0">${formattedDate}</p>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+
+            // Cập nhật phân trang (nếu cần)
+            paginationContainer.innerHTML = data.links.map(link => `<a href="${link.url}">${link.label}</a>`).join('');
+        })
+        .catch(error => console.error('Error fetching filtered data:', error));
+
+        // Đóng modal
+        $('#filterModal').modal('hide');
+    });
+
+</script>
