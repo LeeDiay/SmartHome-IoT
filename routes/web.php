@@ -59,7 +59,6 @@ Route::group(['middleware' => 'auth'], function () {
 Route::post('/control/toggle-device', [ControlController::class, 'toggleDevice']);
 Route::post('/control-device/{id}', [DeviceController::class, 'toggle']);
 
-// Route::get('/device-history', [DeviceHistoryController::class, 'index'])->name('device.history');
 Route::get('/device-history', [DeviceHistoryController::class, 'index'])->name('device-history.index');
 
 Route::get('/sensor-data', [SensorDataController::class, 'index'])->name('sensor.data.index');

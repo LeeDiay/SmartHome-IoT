@@ -1,47 +1,127 @@
-# LẬP TRÌNH WEB FRAMEWORK   
-## _https://challenge5b-vcs-anhld74.000webhostapp.com/_
+# Bài tập lớn môn IoT và ứng dụng
+#### Sinh viên: Lê Đức Anh - B21DCAT026 - Lớp: IoT 06
+## Đề tài: Xây dựng ứng dụng Web điều khiển Smart Home
 
-## Yêu cầu ứng dụng: 
-- Lập trình bằng framework Laravel, sử dụng DB MySQL để xây dựng
-website quản lý thông tin sinh viên, tài liệu của 1 lớp học.
-- Giao diện website rõ ràng, sạch đẹp (có sử dụng HTML, CSS để định
- dạng và thiết kế website).
-- Đăng ký tài khoản và tạo project trên github để quản lý code. Đặt tên
-project challenge5b_&lt;email_viettel&gt;.
-- Deploy ứng dụng lên server public (sử dụng free 000webhost). Đặt tên
-website challenge5b_&lt;email_viettel&gt;. 
+#### 1. Công nghệ sử dụng:
+>Phần mềm:
+>- Framework sử dụng: **Laravel**.
+>- Sử dụng database **MySQL** để lưu trữ dữ liệu.
+>- Trình soạn thảo: **Visual Studio Code**.
+>- MQTT Broker: localhost
+>- Arduino IDE.
 
-## Yêu cầu chức năng: 
+>Phần cứng:
+>- Vi điều khiển: **ESP32**.
+>- Cảm biến nhiệt độ và độ ẩm: **DHT11**.
+>- Cảm biến ánh sáng (quang trở): **LDR**
+>- Breadboard.
+>- Dây nối: đực-đực.
 
-- Giáo viên có thể thêm, sửa, xóa các thông tin của sinh viên. Thông tin có
-các trường cơ bản gồm: tên đăng nhập, mật khẩu, họ tên, email, số điện
-thoại (1đ)
-- Sinh viên sau khi đăng nhập được phép thay đổi các thông tin của mình
-trừ tên đăng nhập và họ tên (1đ).
-- MMột người dùng (giáo viên hoặc sinh viên) bất kỳ đc phép xem danh
-sách các người dùng trên website và xem thông tin chi tiết của một
-người dùng khác. Tại trang xem thông tin chi tiết của một người dùng có
-mục để lại tin nhắn cho người dùng đó, có thể sửa/xóa tin nhắn đã gửi
-(2đ).
-- Giáo viên có thể upload file bài tập lên. Các sinh viên có thể xem
-danh sách bài tập và tải file bài tập về (1đ).
-- Sinh viên có thể upload bài làm tương ứng với bài tập được giao.
-Chỉ giáo viên mới nhìn thấy danh sách bài làm này (1đ).
-- Giáo viên tạo challenge, trong đó cần thực hiện: upload lên 1 file
-txt có nội dung là 1 bài thơ, văn,…, tên file được viết dưới định
-dạng không dấu và các từ cách nhau bởi 1 khoảng trắng. Sau đó
-nhập gợi ý về challenge và submit. (Đáp án chính là tên file mà
-giáo viên upload lên. Không lưu đáp án ra file, DB,…) (1đ)
-- Sinh viên xem gợi ý và nhập đáp án. Khi sinh viên nhập đúng thì
-trả về nội dung bài thơ, văn,… lưu trong file đáp án (1đ).
+#### 2. Giao diện Web:
+Giao diện Dashboard:
+![image](https://hackmd.io/_uploads/rJoZvr_CR.png)
 
-## Output: 
+Giao diện Device History:
+![image](https://hackmd.io/_uploads/By4sYruAR.png)
 
-- Mã nguồn và database website (link project trên github). Lập trình rõ ràng,
-sạch đẹp (code convention chuẩn).
-- Link website đã được deploy public kèm hai tài khoản giáo viên và hai tài
-khoản sinh viên (tài khoản: teacher1 / 123456a@A ; teacher2 / 123456a@A
-; student1 / 123456a@A ; student2 / 123456a@A).
-- Quay video demo chạy thử các chức năng của website.
+Giao diện Sensor Data History:
+![image](https://hackmd.io/_uploads/BJdTFr_AC.png)
 
+Giao diện My Profile:
+![image](https://hackmd.io/_uploads/r1MxqrOCA.png)
+
+Giao diện Change Password: 
+![image](https://hackmd.io/_uploads/SJQf9SdR0.png)
+
+#### 3. Chi tiết bảng mạch:
+Góc chụp bên phải:
+![mach](https://hackmd.io/_uploads/Syo_iHdRC.jpg)
+
+Góc chụp bên trái: 
+![461130012_1872256803261557_6973840931002495687_n](https://hackmd.io/_uploads/H1FhiruR0.jpg)
+
+Góc chụp chính diện: 
+![460165057_3890455757882319_791606423860525749_n](https://hackmd.io/_uploads/SJ4y3B_C0.jpg)
+
+#### 4. Cách set up môi trường và các công cụ cần thiết:
+
+##### Đầu tiên, ta cần khởi chạy được trang web:
+Clone dự án từ Github:
+```none
+git clone https://github.com/LeeDiay/SmartHome-IoT
+cd SmartHome-IoT
+```
+
+Cài đặt Laragon, Composer desktop.Sau đó, chạy composer và npm để cài đặt các gói cần thiết trong dự án
+
+```none
+composer install
+npm install 
+```
+
+Thực hiện lệnh sau để copy ra file env:  
+
+```none
+cp .env.example .env
+```
+
+Tạo database và cập nhật file .env:
+
+Cập nhật file env của bạn như sau:
+
+```none
+DB_CONNECTION=mysql          
+DB_HOST=127.0.0.1            
+DB_PORT=3306                 
+DB_DATABASE=your-db-name    
+DB_USERNAME=root             
+DB_PASSWORD=   
+```
+Tạo ra key cho dự án:
+
+```none
+php artisan key:generate
+```
+
+Tạo ra các bảng và dữ liệu mẫu cho database:
+
+```none
+php artisan migrate
+php artisan db:seed
+```
+
+Khởi chạy project:
+
+```none
+php artisan serve
+```
+
+Đăng nhập với tài khoản và mật khẩu cho sẵn (**admin:12345678**)
+
+##### Tiếp theo, nạp code vào ESP32:
+
+Cài đặt Arduino, cùng các thư viện cần thiết: DHT11, esp32, ...
+
+Cài đặt Driver để nhận máy tính nhận Port khi kết nối với ESP32. Link tải ở đây: [link ](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads)
+
+Copy code trong file ***code_full_with_esp32.ino***, tiến hành chọn đúng Board, Port đang sử dụng và tiến hành upload code lên ESP32.
+
+##### Cuối cùng, tải MQTT Broker để chạy server mqtt trên local:
+
+Cài đặt mqtt về máy, setup username, password cho broker. Thay đổi các giá trị này trong file .env:
+
+```
+MQTT_HOST=your-broker-host (recommend: localhost)
+MQTT_PORT=your-broker-port
+MQTT_USERNAME=your-mqtt-username
+MQTT_PASSWORD=your-mqtt-password
+```
+
+. Để bắt đầu sub message từ esp về, sử dụng lệnh: 
+
+```none
+php artisan mqtt:sensor-subscribe
+```
+
+Nếu có bất kì lỗi nào, hãy quan sát file log ***/storage/logs/laravel.log*** trong Laravel để debug!
 

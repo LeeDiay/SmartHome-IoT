@@ -17,7 +17,7 @@ class SensorController extends Controller
         $connectionSettings = (new ConnectionSettings)
             ->setUsername(env('MQTT_USERNAME'))
             ->setPassword(env('MQTT_PASSWORD'))
-            ->setUseTls(true);
+            ->setUseTls(false);
 
         try {
             $mqtt->connect($connectionSettings);

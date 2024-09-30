@@ -11,7 +11,7 @@ class Device extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'status', 'icon', 'type', 'last_toggled_at'];
+    protected $fillable = ['name', 'status', 'last_toggled_at'];
 
     // Bạn có thể cần thêm các thuộc tính khác nếu có
 }
