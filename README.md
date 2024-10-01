@@ -52,7 +52,7 @@ git clone https://github.com/LeeDiay/SmartHome-IoT
 cd SmartHome-IoT
 ```
 
-Cài đặt Laragon, Composer desktop.Sau đó, chạy composer và npm để cài đặt các gói cần thiết trong dự án
+Cài đặt Laragon, Composer desktop. Sau đó, chạy composer và npm để cài đặt các gói cần thiết trong dự án:
 
 ```none
 composer install
@@ -102,7 +102,7 @@ php artisan serve
 
 Cài đặt Arduino, cùng các thư viện cần thiết: DHT11, esp32, ...
 
-Cài đặt Driver để nhận máy tính nhận Port khi kết nối với ESP32. Link tải ở đây: [link ](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads)
+Cài đặt Driver để máy tính nhận Port khi kết nối với ESP32. Link tải ở đây: [link ](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads)
 
 Copy code trong file ***code_full_with_esp32.ino***, tiến hành chọn đúng Board, Port đang sử dụng và tiến hành upload code lên ESP32.
 
