@@ -38,6 +38,10 @@ class SensorController extends Controller
 
         } catch (\Exception $e) {
             \Log::error("Error connecting to MQTT broker: " . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to connect to MQTT broker'
+            ], 500);
         }
     }
 

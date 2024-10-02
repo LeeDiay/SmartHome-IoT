@@ -1,0 +1,114 @@
+openapi: 3.0.3
+info:
+  title: Laravel
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost'
+paths:
+  /api/user:
+    get:
+      summary: ''
+      operationId: getApiUser
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+      security: []
+  /api/sensor-data:
+    get:
+      summary: "Retrieve all sensor data.\n\nThis endpoint retrieves all sensor data from the database, sorted by the time received."
+      operationId: retrieveAllSensorDataThisEndpointRetrievesAllSensorDataFromTheDatabaseSortedByTheTimeReceived
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"current_page\": 1,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"temperature\": 22.5,\n      \"humidity\": 60,\n      \"light\": 300,\n      \"received_at\": \"2024-10-02 15:32:10\"\n    },\n    // ... other data entries\n  ],\n  \"last_page\": 10,\n  \"total\": 100\n}"
+      tags:
+        - 'Sensor Data'
+      security: []
+  /api/sensor-data/latest:
+    get:
+      summary: "Get latest sensor data.\n\nThis endpoint retrieves the latest sensor data from the database, sorted by the time received."
+      operationId: getLatestSensorDataThisEndpointRetrievesTheLatestSensorDataFromTheDatabaseSortedByTheTimeReceived
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"current_page\": 1,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"temperature\": 22.5,\n      \"humidity\": 60,\n      \"light\": 300,\n      \"received_at\": \"2024-10-02 15:32:10\"\n    },\n    // ... other data entries\n  ],\n  \"last_page\": 10,\n  \"total\": 100\n}"
+      tags:
+        - 'Sensor Data'
+      security: []
+  /api/sensor-data/filter:
+    post:
+      summary: "Filter sensor data.\n\nThis endpoint filters sensor data based on the given parameters: start date, end date, sort by attributes, and sort order."
+      operationId: filterSensorDataThisEndpointFiltersSensorDataBasedOnTheGivenParametersStartDateEndDateSortByAttributesAndSortOrder
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n  \"current_page\": 1,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"temperature\": 22.5,\n      \"humidity\": 60,\n      \"light\": 300,\n      \"received_at\": \"2024-10-02 15:32:10\"\n    },\n    // ... other filtered data entries\n  ],\n  \"last_page\": 10,\n  \"total\": 50\n}"
+      tags:
+        - 'Sensor Data'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start_date:
+                  type: string
+                  description: 'optional The start date for filtering data. Format: YYYY-MM-DD HH:MM:SS'
+                  example: molestiae
+                end_date:
+                  type: string
+                  description: 'optional The end date for filtering data. Format: YYYY-MM-DD HH:MM:SS'
+                  example: quos
+                sort_by:
+                  type: array
+                  description: "optional The attributes to sort by (e.g., ['light', 'temperature'])."
+                  example: null
+                  items:
+                    type: string
+                sort_order:
+                  type: string
+                  description: "optional The order to sort by, either 'asc' or 'desc' (default is 'asc')."
+                  example: officiis
+      security: []
+tags:
+  -
+    name: Endpoints
+    description: ''
+  -
+    name: 'Sensor Data'
+    description: ''

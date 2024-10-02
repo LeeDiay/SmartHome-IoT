@@ -1,0 +1,190 @@
+{
+    "variable": [
+        {
+            "id": "baseUrl",
+            "key": "baseUrl",
+            "type": "string",
+            "name": "string",
+            "value": "http:\/\/localhost"
+        }
+    ],
+    "info": {
+        "name": "Laravel",
+        "_postman_id": "3d0be4a0-b89c-424e-8ad6-2bfc8bf8efd3",
+        "description": "",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
+    },
+    "item": [
+        {
+            "name": "Endpoints",
+            "description": "",
+            "item": [
+                {
+                    "name": "GET api\/user",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/user",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/user"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Sensor Data",
+            "description": "",
+            "item": [
+                {
+                    "name": "Retrieve all sensor data.\n\nThis endpoint retrieves all sensor data from the database, sorted by the time received.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/sensor-data",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/sensor-data"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"current_page\": 1,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"temperature\": 22.5,\n      \"humidity\": 60,\n      \"light\": 300,\n      \"received_at\": \"2024-10-02 15:32:10\"\n    },\n    \/\/ ... other data entries\n  ],\n  \"last_page\": 10,\n  \"total\": 100\n}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Get latest sensor data.\n\nThis endpoint retrieves the latest sensor data from the database, sorted by the time received.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/sensor-data\/latest",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/sensor-data\/latest"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"current_page\": 1,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"temperature\": 22.5,\n      \"humidity\": 60,\n      \"light\": 300,\n      \"received_at\": \"2024-10-02 15:32:10\"\n    },\n    \/\/ ... other data entries\n  ],\n  \"last_page\": 10,\n  \"total\": 100\n}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Filter sensor data.\n\nThis endpoint filters sensor data based on the given parameters: start date, end date, sort by attributes, and sort order.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/sensor-data\/filter",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/sensor-data\/filter"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"start_date\":\"molestiae\",\"end_date\":\"quos\",\"sort_by\":null,\"sort_order\":\"officiis\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n  \"current_page\": 1,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"temperature\": 22.5,\n      \"humidity\": 60,\n      \"light\": 300,\n      \"received_at\": \"2024-10-02 15:32:10\"\n    },\n    \/\/ ... other filtered data entries\n  ],\n  \"last_page\": 10,\n  \"total\": 50\n}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "noauth"
+    }
+}

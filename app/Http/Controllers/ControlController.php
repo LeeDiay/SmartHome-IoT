@@ -52,23 +52,32 @@ class ControlController extends Controller
                 // Gửi tin nhắn đến topic MQTT
                 if (!$mqtt->publish($topic, $message, 0)) {
                     \Log::info("Message published to $topic: " . $message);
+                    return response()->json([
+                        'status' => 'success',
+                        'device' => [
+                            'name' => $device->name,
+                            'status' => $device->status,
+                            'last_toggle_at' => $device->last_toggled_at->format('H:i:s d-m-Y')
+                        ]
+                    ]);
                 } else {
                     \Log::error("Failed to publish message to $topic");
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Failed to  publish message'
+                    ], 500);
                 }
-                
                 $mqtt->disconnect(); // Ngắt kết nối sau khi gửi tin nhắn
-            } catch (\Exception $e) {
-                \Log::error("Error connecting to MQTT broker: " . $e->getMessage());
+            } 
+            catch (\Exception $e) {
+                \Log::error("Error connecting to MQTT broker: " . $e->getMessage());           
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Failed to connect to MQTT broker'
+                ], 500);
             }
 
-            return response()->json([
-                'status' => 'success',
-                'device' => [
-                    'name' => $device->name,
-                    'status' => $device->status,
-                    'last_toggle_at' => $device->last_toggled_at->format('H:i:s d-m-Y')
-                ]
-            ]);
+            
         }
 
         return response()->json([
