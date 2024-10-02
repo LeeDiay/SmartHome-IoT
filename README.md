@@ -11,13 +11,20 @@
 >- Arduino IDE.
 
 >Phần cứng:
->- Vi điều khiển: **ESP32**.
+>- Vi điều khiển: **ESP-WROOM-32**.
 >- Cảm biến nhiệt độ và độ ẩm: **DHT11**.
 >- Cảm biến ánh sáng (quang trở): **LDR**
 >- Breadboard.
 >- Dây nối: đực-đực.
+>- Đèn LED 5mm
 
 #### 2. Giao diện Web:
+Giao diện trang Login: 
+![image](https://hackmd.io/_uploads/SJ_GiBqCR.png)
+
+Giao diện trang Register Account:
+![image](https://hackmd.io/_uploads/S1EviH9C0.png)
+
 Giao diện Dashboard:
 ![image](https://hackmd.io/_uploads/rJoZvr_CR.png)
 
@@ -52,7 +59,7 @@ git clone https://github.com/LeeDiay/SmartHome-IoT
 cd SmartHome-IoT
 ```
 
-Cài đặt Laragon, Composer desktop. Sau đó, chạy composer và npm để cài đặt các gói cần thiết trong dự án:
+Cài đặt Laragon, Composer desktop. Sau đó, chạy composer và npm để cài đặt các gói cần thiết trong dự án
 
 ```none
 composer install
@@ -102,15 +109,45 @@ php artisan serve
 
 Cài đặt Arduino, cùng các thư viện cần thiết: DHT11, esp32, ...
 
-Cài đặt Driver để máy tính nhận Port khi kết nối với ESP32. Link tải ở đây: [link ](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads)
+Cài đặt Driver để nhận máy tính nhận Port khi kết nối với ESP32. Link tải ở đây: [link ](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads)
 
 Copy code trong file ***code_full_with_esp32.ino***, tiến hành chọn đúng Board, Port đang sử dụng và tiến hành upload code lên ESP32.
 
 ##### Cuối cùng, tải MQTT Broker để chạy server mqtt trên local:
 
-Cài đặt mqtt về máy, setup username, password cho broker. Thay đổi các giá trị này trong file .env:
+Cài đặt mqtt về máy, mở cmd tại thư mục đã cài đặt mosquitto. 
+
+Setup username, password cho broker:
+```
+mosquitto_passwd -c "your-file-locate-username" "your-username"
+```
+Nhập mật khẩu cho username. Sau đó, mở file *mosquitto.conf*, thêm các dòng này vào để config lại và lưu lại:
+```
+listener your-custom-port
+allow_anonymous false
+
+password_file "your-file-locate-username"
+```
+
+Bên ngoài cmd, chạy lại lệnh sau để load lại config và chạy lại server:
+```
+mosquitto -c mosquitto.conf -v
+```
+
+Hiển thị thông báo thành công, ví dụ:
 
 ```
+D:\DucAnh_WebSec\mosquitto>mosquitto -c mosquitto.conf -v
+1727836863: mosquitto version 2.0.18 starting
+1727836863: Config loaded from mosquitto.conf.
+1727836863: Opening ipv6 listen socket on port 4444.
+1727836863: Opening ipv4 listen socket on port 4444.
+1727836863: mosquitto version 2.0.18 running
+```
+
+Thay đổi các giá trị này trong file *.env* :
+
+```none
 MQTT_HOST=your-broker-host (recommend: localhost)
 MQTT_PORT=your-broker-port
 MQTT_USERNAME=your-mqtt-username
