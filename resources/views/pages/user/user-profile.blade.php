@@ -31,25 +31,25 @@
 
                 <!-- Static Section for Report and API Doc Links -->
                 <div class="row gx-4 mb-2">
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label">Báo cáo PDF</label>
-                        <a href="https://drive.google.com/file/d/14xE_URUkanJiBqTBKtDRhIoWwqPYmIME/view?usp=drive_link" class="form-control border border-2 p-2" target="_blank">
-                            Download Báo cáo PDF
-                        </a>
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label">API Documentation</label>
-                        <a href="/path/to/api-doc.pdf" class="form-control border border-2 p-2" target="_blank">
-                            Download API Documentation
-                        </a>
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label">API Documentation</label>
-                        <a href="https://github.com/LeeDiay/SmartHome-IoT" class="form-control border border-2 p-2" target="_blank">
-                            Link Git
-                        </a>
-                    </div>
-                </div>
+    <div class="mb-3 col-md-4">
+        <label class="form-label">Báo cáo PDF</label>
+        <a href="https://drive.google.com/file/d/14xE_URUkanJiBqTBKtDRhIoWwqPYmIME/view?usp=drive_link" class="form-control border border-2 p-2" target="_blank">
+            Download Báo cáo PDF
+        </a>
+    </div>
+    <div class="mb-3 col-md-4">
+        <label class="form-label">API Documentation</label>
+        <a href="/path/to/api-doc.pdf" class="form-control border border-2 p-2" target="_blank">
+            Download API Documentation
+        </a>
+    </div>
+    <div class="mb-3 col-md-4">
+        <label class="form-label">Link Git</label>
+        <a href="https://github.com/LeeDiay/SmartHome-IoT" class="form-control border border-2 p-2" target="_blank">
+            Link Git
+        </a>
+    </div>
+</div>
 
                 <!-- Other Information Display -->
                 <div class="card card-plain h-100">
