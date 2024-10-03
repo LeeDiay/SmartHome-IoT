@@ -27,99 +27,62 @@
                             </p>
                         </div>
                     </div>
-                    
+                </div>
+
+                <!-- Static Section for Report and API Doc Links -->
+                <div class="row gx-4 mb-2">
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label">Báo cáo PDF</label>
+                        <a href="https://drive.google.com/file/d/14xE_URUkanJiBqTBKtDRhIoWwqPYmIME/view?usp=drive_link" class="form-control border border-2 p-2" target="_blank">
+                            Download Báo cáo PDF
+                        </a>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label">API Documentation</label>
+                        <a href="/path/to/api-doc.pdf" class="form-control border border-2 p-2" target="_blank">
+                            Download API Documentation
+                        </a>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label class="form-label">API Documentation</label>
+                        <a href="https://github.com/LeeDiay/SmartHome-IoT" class="form-control border border-2 p-2" target="_blank">
+                            Link Git
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Other Information Display -->
                 <div class="card card-plain h-100">
                     <div class="card-header pb-0 p-3">
-                        <div class="row">
-                            <div class="col-md-8 d-flex align-items-center">
-                                <h6 class="mb-3">Thông tin cá nhân</h6>
-                            </div>
-                        </div>
+                        <h6 class="mb-3">Thông tin cá nhân</h6>
                     </div>
                     <div class="card-body p-3">
-                        @if (session('status'))
                         <div class="row">
-                            <div class="alert alert-success alert-dismissible text-white" role="alert">
-                                <span class="text-sm">{{ Session::get('status') }}</span>
-                                <button type="button" class="btn-close text-lg py-3 opacity-10"
-                                    data-bs-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Mã sinh viên</label>
+                                <input class="form-control border border-2 p-2" value='B21DCAT026' disabled>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Email</label>
+                                <input class="form-control border border-2 p-2" value='{{ auth()->user()->email }}' disabled>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Họ và tên</label>
+                                <input class="form-control border border-2 p-2" value='{{ auth()->user()->name }}' disabled>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Số điện thoại</label>
+                                <input class="form-control border border-2 p-2" value='{{ auth()->user()->phone }}' disabled>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Nơi ở</label>
+                                <input class="form-control border border-2 p-2" value='{{ auth()->user()->location }}' disabled>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Github</label>
+                                <input class="form-control border border-2 p-2" value='https://github.com/LeeDiay' disabled>
                             </div>
                         </div>
-                        @endif
-                        
-                        <form method='POST' enctype="multipart/form-data" action='{{ route('user-profile') }}' >
-                            @csrf
-                            <div class="row">
-                                
-                            <div class="mb-3 col-md-6">
-                                    <label class="form-label">Mã sinh viên</label>
-                                    <input  class="form-control border border-2 p-2" value='B21DCAT026'>
-                                    
-                                </div>
-                                <div class="mb-3 col-md-6">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" name="email" class="form-control border border-2 p-2" value='{{ old('email', auth()->user()->email) }}'>
-                                    @error('email')
-                                        <p class='text-danger inputerror'>{{ $message }} </p>
-                                    @enderror
-                                </div>
-                                
-                                <div class="mb-3 col-md-6">
-                                    <label class="form-label">Họ và tên</label>
-                                    <input type="text" name="name" class="form-control border border-2 p-2" value='{{ old('name', auth()->user()->name) }}'>
-                                    @error('name')
-                                        <p class='text-danger inputerror'>{{ $message }} </p>
-                                    @enderror
-                                </div>
-                               
-                                <div class="mb-3 col-md-6">
-                                    <label class="form-label">Số điện thoại</label>
-                                    <input type="text" name="phone" class="form-control border border-2 p-2" value='{{ old('phone', auth()->user()->phone) }}'>
-                                    @error('phone')
-                                        <p class='text-danger inputerror'>{{ $message }} </p>
-                                    @enderror
-                                </div>
-                                
-                                <div class="mb-3 col-md-6">
-                                    <label class="form-label">Nơi ở</label>
-                                    <input type="text" name="location" class="form-control border border-2 p-2" value='{{ old('location', auth()->user()->location) }}'>
-                                    @error('location')
-                                        <p class='text-danger inputerror'>{{ $message }} </p>
-                                    @enderror
-                                </div>
-                                <div class="mb-3 col-md-6">
-                                    <label class="form-label">Github</label>
-                                    <input  class="form-control border border-2 p-2" value='https://github.com/LeeDiay'>
-                                    @error('location')
-                                        <p class='text-danger inputerror'>{{ $message }} </p>
-                                    @enderror
-                                </div>
-                                
-                                <div class="mb-3 col-md-12">
-                                    <label for="floatingTextarea2">Lớp</label>
-                                    <textarea class="form-control border border-2 p-2"
-                                        placeholder=" Nói gì đó về bản thân..." id="floatingTextarea2" name="about"
-                                        rows="4" cols="50">{{ old('about', auth()->user()->about) }}</textarea>
-                                        @error('about')
-                                            <p class='text-danger inputerror'>{{ $message }} </p>
-                                        @enderror
-                                </div>
-                                <div class="mb-3 col-md-6">
-                                    <label class="form-label">Thay đổi avatar</label>
-                                    <input type="file" name="avatar" class="form-control border border-2 p-2" accept=".png, .jpg, .jpeg">
-                                    @error('avatar')
-                                        <p class='text-danger inputerror'>{{ $message }} </p>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div>
-                            <button type="submit" class="btn bg-gradient-success ">
-                                <i class="material-icons text-lg">save</i>&nbsp;&nbsp;Lưu thay đổi
-                            </button>
-                        </form>
-
                     </div>
                 </div>
             </div>
