@@ -10,6 +10,53 @@ use PhpMqtt\Client\ConnectionSettings;
 
 class ControlController extends Controller
 {
+    /**
+     * Toggle the status of a device.
+     *
+     * This endpoint allows toggling the status of a device (on/off) and sends
+     * a message to the MQTT broker to reflect the updated status.
+     *
+     * @OA\Post(
+     *     path="/control/toggle-device",
+     *     summary="Toggle device status",
+     *     tags={"Device Controll"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"device_id"},
+     *             @OA\Property(property="device_id", type="integer", example=1, description="The ID of the device to toggle")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Device toggled successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="device", type="object",
+     *                 @OA\Property(property="name", type="string", example="Quạt"),
+     *                 @OA\Property(property="status", type="boolean", example=true),
+     *                 @OA\Property(property="last_toggle_at", type="string", example="15:32:10 02-10-2024")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Device not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Device not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to connect to MQTT broker",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Failed to connect to MQTT broker")
+     *         )
+     *     )
+     * )
+     */
     public function toggleDevice(Request $request)
     {
         $device = Device::find($request->device_id);
@@ -22,9 +69,9 @@ class ControlController extends Controller
             //Tạo mới 1 bản ghi vào lịch sử bật/tắt
             DeviceToggle::create([
                 'device_id' => $device->id,
-                'device_name' => $device->name, // Lưu tên thiết bị
-                'status' => $device->status, // Trạng thái mới
-                'toggled_at' => now(), // Thời gian bật/tắt
+                'device_name' => $device->name,
+                'status' => $device->status,
+                'toggled_at' => now(),
             ]);
 
             // Khởi tạo kết nối MQTT
@@ -36,53 +83,48 @@ class ControlController extends Controller
             $connectionSettings = (new ConnectionSettings)
                 ->setUsername(env('MQTT_USERNAME'))
                 ->setPassword(env('MQTT_PASSWORD'))
-                ->setUseTls(false); // Nếu bạn đang kết nối qua TLS
+                ->setUseTls(false);
 
             try {
-                // Kết nối đến broker
                 $mqtt->connect($connectionSettings);
                 \Log::info("Connected to MQTT broker");
 
-                // Xác định topic dựa trên ID của thiết bị
-                $topic = "home/led" . $device->id; // Ví dụ: "home/led1", "home/led2",...
+                // Xác định topic và gửi tin nhắn
+                $topic = "home/led" . $device->id;
+                $message = $device->status ? "on" : "off";
 
-                // Xác định tin nhắn dựa trên trạng thái mới
-                $message = $device->status ? "on" : "off"; // Nếu thiết bị bật thì gửi "on", ngược lại gửi "off"
-
-                // Gửi tin nhắn đến topic MQTT
                 if (!$mqtt->publish($topic, $message, 0)) {
                     \Log::info("Message published to $topic: " . $message);
-                    return response()->json([
-                        'status' => 'success',
-                        'device' => [
-                            'name' => $device->name,
-                            'status' => $device->status,
-                            'last_toggle_at' => $device->last_toggled_at->format('H:i:s d-m-Y')
-                        ]
-                    ]);
                 } else {
                     \Log::error("Failed to publish message to $topic");
                     return response()->json([
                         'status' => 'error',
-                        'message' => 'Failed to  publish message'
+                        'message' => 'Failed to publish message'
                     ], 500);
                 }
-                $mqtt->disconnect(); // Ngắt kết nối sau khi gửi tin nhắn
-            } 
-            catch (\Exception $e) {
-                \Log::error("Error connecting to MQTT broker: " . $e->getMessage());           
+
+                $mqtt->disconnect();
+            } catch (\Exception $e) {
+                \Log::error("Error connecting to MQTT broker: " . $e->getMessage());
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Failed to connect to MQTT broker'
                 ], 500);
             }
 
-            
+            return response()->json([
+                'status' => 'success',
+                'device' => [
+                    'name' => $device->name,
+                    'status' => $device->status,
+                    'last_toggle_at' => $device->last_toggled_at->format('H:i:s d-m-Y')
+                ]
+            ]);
         }
 
         return response()->json([
             'status' => 'error',
             'message' => 'Device not found'
-        ]);
+        ], 404);
     }
 }
