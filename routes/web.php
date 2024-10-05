@@ -56,11 +56,13 @@ Route::group(['middleware' => 'auth'], function () {
 
 });
 
+// Route for toggle device
 Route::post('/control/toggle-device', [ControlController::class, 'toggleDevice']);
-Route::post('/control-device/{id}', [DeviceController::class, 'toggle']);
 
+// Route for get device toggle history
 Route::get('/device-history', [DeviceHistoryController::class, 'index'])->name('device-history.index');
 
+// Route for handle data sensor
 Route::get('/sensor-data', [SensorDataController::class, 'index'])->name('sensor.data.index');
 Route::get('/sensor-data/latest', [SensorDataController::class, 'getLatestData'])->name('sensor.data.latest');
 Route::get('/sensor-data/filter', [SensorDataController::class, 'filterData'])->name('sensor.data.filter');

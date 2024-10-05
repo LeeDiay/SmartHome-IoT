@@ -32,19 +32,21 @@
                 <!-- Static Section for Report and API Doc Links -->
                 <div class="row gx-4 mb-2">
                     <div class="mb-3 col-md-4">
+                        <label class="form-label">Link Báo cáo</label>
                         <a href="https://drive.google.com/file/d/14xE_URUkanJiBqTBKtDRhIoWwqPYmIME/view?usp=drive_link" class="form-control border border-2 p-2" target="_blank">
-                            Link Báo cáo PDF
+                            Báo cáo BTL IoT nhóm 06
                         </a>
                     </div>
                     <div class="mb-3 col-md-4">
+                        <label class="form-label">Link API Docs</label>
                         <a href="http://160.30.54.8/swagger-ui/dist/" class="form-control border border-2 p-2" target="_blank">
                             API Documentation
                         </a>
                     </div>
                     <div class="mb-3 col-md-4">
-                        <label class="form-label">Link Git</label>
+                        <label class="form-label">Link Github project</label>
                         <a href="https://github.com/LeeDiay/SmartHome-IoT" class="form-control border border-2 p-2" target="_blank">
-                            Link Git
+                            IoT Github Project
                         </a>
                     </div>
                 </div>
@@ -73,8 +75,8 @@
                                 <input class="form-control border border-2 p-2" value='{{ auth()->user()->phone }}' disabled>
                             </div>
                             <div class="mb-3 col-md-6">
-                                <label class="form-label">Nơi ở</label>
-                                <input class="form-control border border-2 p-2" value='{{ auth()->user()->location }}' disabled>
+                                <label class="form-label">Lớp học phần</label>
+                                <input class="form-control border border-2 p-2" value='Lớp IoT - 06' disabled>
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label class="form-label">Github</label>

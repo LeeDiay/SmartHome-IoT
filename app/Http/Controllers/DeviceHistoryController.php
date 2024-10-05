@@ -2,12 +2,81 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DeviceToggle; // Model for the device_toggles table
+use App\Models\DeviceToggle; // Model cho bảng device_toggles
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class DeviceHistoryController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/device-history",
+     *     summary="Get device toggle history",
+     *     description="Retrieve the history of device toggles with optional search by time and pagination",
+     *     operationId="getDeviceToggleHistory",
+     *     tags={"Device History"},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="The page number for pagination",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=1
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="page_size",
+     *         in="query",
+     *         description="Number of items per page",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=10
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="search_time",
+     *         in="query",
+     *         description="Search by time (accepts formats: DD/MM/YYYY, YYYY-MM-DD, HH:MM:SS, etc.)",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             example="01/10/2024"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="deviceHistory",
+     *                 description="List of device toggle records",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="toggled_at", type="string", example="2023-12-12 15:30:00"),
+     *                     @OA\Property(property="device_name", type="string", example="Light Bulb")
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="pagination",
+     *                 description="Pagination details",
+     *                 @OA\Property(property="total", type="integer", example=100),
+     *                 @OA\Property(property="per_page", type="integer", example=10),
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=10),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="to", type="integer", example=10)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found"
+     *     )
+     * )
+     */
     public function index(Request $request)
     {
         // Lấy kích thước trang từ yêu cầu, mặc định là 10
@@ -100,5 +169,4 @@ class DeviceHistoryController extends Controller
         // Nếu không phải JSON, trả về view
         return view('device-history.index', compact('deviceHistory', 'pageSize', 'searchTime'));
     }
-
 }

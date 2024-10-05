@@ -12,11 +12,11 @@
         "/control/toggle-device": {
             "post": {
                 "tags": [
-                    "Device Control"
+                    "Device Controll"
                 ],
                 "summary": "Toggle device status",
-                "description": "Toggle the status of a device (on/off) and publish an MQTT message to update its status.",
-                "operationId": "toggleDevice",
+                "description": "Toggle the status of a device.\n\nThis endpoint allows toggling the status of a device (on/off) and sends\na message to the MQTT broker to reflect the updated status.",
+                "operationId": "da3b13632110d68b47522f255780f49d",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -27,7 +27,7 @@
                                 ],
                                 "properties": {
                                     "device_id": {
-                                        "description": "The ID of the device to be toggled",
+                                        "description": "The ID of the device to toggle",
                                         "type": "integer",
                                         "example": 1
                                     }
@@ -51,19 +51,15 @@
                                         "device": {
                                             "properties": {
                                                 "name": {
-                                                    "description": "Name of the device",
                                                     "type": "string",
                                                     "example": "Quạt"
                                                 },
                                                 "status": {
-                                                    "description": "Current status of the device",
                                                     "type": "boolean",
                                                     "example": true
                                                 },
                                                 "last_toggle_at": {
-                                                    "description": "The last time the device was toggled",
                                                     "type": "string",
-                                                    "format": "date-time",
                                                     "example": "15:32:10 02-10-2024"
                                                 }
                                             },
@@ -115,12 +111,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/device-history": {
@@ -129,13 +120,23 @@
                     "Device History"
                 ],
                 "summary": "Get device toggle history",
-                "description": "Display a paginated list of device toggle history records with optional search functionality.\n\nThis method allows users to view device toggle history and filter by specific date or time.\nIt supports pagination and searches by exact or partial time matches.",
-                "operationId": "52ee9f8eb154f1e83d6134b405ed11f3",
+                "description": "Retrieve the history of device toggles with optional search by time and pagination",
+                "operationId": "getDeviceToggleHistory",
                 "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
                     {
                         "name": "page_size",
                         "in": "query",
-                        "description": "The number of records to return per page (default is 10)",
+                        "description": "Number of items per page",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -145,58 +146,80 @@
                     {
                         "name": "search_time",
                         "in": "query",
-                        "description": "Search for toggles by date (YYYY-MM-DD), time (HH:MM:SS), or time (HH:MM)",
+                        "description": "Search by time (accepts formats: DD/MM/YYYY, YYYY-MM-DD, HH:MM:SS, etc.)",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "2024-10-02"
+                            "example": "01/10/2024"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of device toggle history",
+                        "description": "Successful operation",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "deviceHistory": {
+                                            "description": "List of device toggle records",
                                             "type": "array",
                                             "items": {
                                                 "properties": {
-                                                    "device_id": {
+                                                    "id": {
                                                         "type": "integer",
                                                         "example": 1
                                                     },
-                                                    "device_name": {
-                                                        "type": "string",
-                                                        "example": "Quạt"
-                                                    },
-                                                    "status": {
-                                                        "type": "boolean",
-                                                        "example": true
-                                                    },
                                                     "toggled_at": {
                                                         "type": "string",
-                                                        "example": "15:32:10 02-10-2024"
+                                                        "example": "2023-12-12 15:30:00"
+                                                    },
+                                                    "device_name": {
+                                                        "type": "string",
+                                                        "example": "Light Bulb"
                                                     }
                                                 },
                                                 "type": "object"
                                             }
                                         },
-                                        "pageSize": {
-                                            "type": "integer",
-                                            "example": 10
-                                        },
-                                        "searchTime": {
-                                            "type": "string",
-                                            "example": "2024-10-02"
+                                        "pagination": {
+                                            "description": "Pagination details",
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Not Found"
                     }
                 }
             }
@@ -206,12 +229,24 @@
                 "tags": [
                     "Sensor Data"
                 ],
-                "summary": "Get all sensor data",
-                "description": "Display a listing of sensor data.\n\nRetrieves all data from the `sensor_data_history` table and sorts it by the received time. \nData is paginated with 10 records per page.",
-                "operationId": "1708cf552bb89f976515da328297d53e",
+                "summary": "Get sensor data history",
+                "description": "Retrieve the list of sensor data with pagination",
+                "operationId": "getSensorDataHistory",
+                "parameters": [
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "A list of sensor data",
+                        "description": "Successful operation",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -221,6 +256,7 @@
                                             "example": 1
                                         },
                                         "data": {
+                                            "description": "List of sensor data",
                                             "type": "array",
                                             "items": {
                                                 "properties": {
@@ -230,32 +266,59 @@
                                                     },
                                                     "temperature": {
                                                         "type": "number",
-                                                        "example": 22.5
+                                                        "example": 25.5
                                                     },
                                                     "humidity": {
                                                         "type": "number",
-                                                        "example": 60
+                                                        "example": 60.3
                                                     },
                                                     "light": {
-                                                        "type": "number",
-                                                        "example": 350
+                                                        "type": "integer",
+                                                        "example": 800
                                                     },
                                                     "received_at": {
                                                         "type": "string",
-                                                        "example": "2024-10-03T10:00:00"
+                                                        "example": "2023-10-05 12:34:56"
                                                     }
                                                 },
                                                 "type": "object"
                                             }
+                                        },
+                                        "pagination": {
+                                            "description": "Pagination details",
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
-                    },
-                    "500": {
-                        "description": "Internal server error"
                     }
                 }
             }
@@ -266,224 +329,210 @@
                     "Sensor Data"
                 ],
                 "summary": "Get the latest sensor data",
-                "description": "Get the latest sensor data.",
-                "operationId": "b5fb2fdf5cc93e726595698acb7a7e74",
+                "description": "Retrieve the latest sensor data with pagination",
+                "operationId": "getLatestSensorData",
+                "parameters": [
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "The latest sensor data",
+                        "description": "Successful operation",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "current_page": {
-                                            "description": "Current page number",
                                             "type": "integer",
                                             "example": 1
                                         },
                                         "data": {
+                                            "description": "Latest sensor data",
                                             "type": "array",
                                             "items": {
                                                 "properties": {
                                                     "id": {
-                                                        "description": "Unique identifier for the sensor data entry",
                                                         "type": "integer",
-                                                        "example": 3153
+                                                        "example": 1
                                                     },
                                                     "temperature": {
-                                                        "description": "Current temperature reading in degrees Celsius as a string",
-                                                        "type": "string",
-                                                        "example": "30.00"
+                                                        "type": "number",
+                                                        "example": 26
                                                     },
                                                     "humidity": {
-                                                        "description": "Current humidity reading in percentage as a string",
-                                                        "type": "string",
-                                                        "example": "53.00"
+                                                        "type": "number",
+                                                        "example": 65
                                                     },
                                                     "light": {
-                                                        "description": "Current light level reading in lumens",
                                                         "type": "integer",
-                                                        "example": 2700
+                                                        "example": 700
                                                     },
                                                     "received_at": {
-                                                        "description": "Timestamp when the data was received in ISO 8601 format",
                                                         "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2024-10-02T16:11:37.000000Z"
+                                                        "example": "2023-10-05 13:00:00"
                                                     }
                                                 },
                                                 "type": "object"
                                             }
-                                        },
-                                        "first_page_url": {
-                                            "description": "URL of the first page",
-                                            "type": "string",
-                                            "example": "http://127.0.0.1:8000/sensor-data/latest?page=1"
-                                        },
-                                        "from": {
-                                            "description": "Index of the first item on the current page",
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "last_page": {
-                                            "description": "Total number of pages",
-                                            "type": "integer",
-                                            "example": 68
-                                        },
-                                        "last_page_url": {
-                                            "description": "URL of the last page",
-                                            "type": "string",
-                                            "example": "http://127.0.0.1:8000/sensor-data/latest?page=68"
-                                        },
-                                        "links": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "url": {
-                                                        "description": "URL of the page",
-                                                        "type": "string",
-                                                        "example": "http://127.0.0.1:8000/sensor-data/latest?page=2",
-                                                        "nullable": true
-                                                    },
-                                                    "label": {
-                                                        "description": "Label for the page link",
-                                                        "type": "string",
-                                                        "example": "2"
-                                                    },
-                                                    "active": {
-                                                        "description": "Indicates if this page link is active",
-                                                        "type": "boolean",
-                                                        "example": false
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        },
-                                        "next_page_url": {
-                                            "description": "URL of the next page",
-                                            "type": "string",
-                                            "example": "http://127.0.0.1:8000/sensor-data/latest?page=2"
-                                        },
-                                        "path": {
-                                            "description": "Base URL of the request",
-                                            "type": "string",
-                                            "example": "http://127.0.0.1:8000/sensor-data/latest"
-                                        },
-                                        "per_page": {
-                                            "description": "Number of items per page",
-                                            "type": "integer",
-                                            "example": 10
-                                        },
-                                        "prev_page_url": {
-                                            "description": "URL of the previous page",
-                                            "type": "string",
-                                            "example": null,
-                                            "nullable": true
-                                        },
-                                        "to": {
-                                            "description": "Index of the last item on the current page",
-                                            "type": "integer",
-                                            "example": 10
-                                        },
-                                        "total": {
-                                            "description": "Total number of items",
-                                            "type": "integer",
-                                            "example": 671
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
-                    },
-                    "500": {
-                        "description": "Internal server error"
                     }
                 }
             }
         },
         "/sensor-data/filter": {
-            "post": {
+            "get": {
                 "tags": [
                     "Sensor Data"
                 ],
                 "summary": "Filter sensor data",
-                "description": "Filter sensor data based on time range and attributes.",
-                "operationId": "395fb0f000d998eb1694104362872902",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "start_date",
-                                    "end_date"
-                                ],
-                                "properties": {
-                                    "start_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2024-10-01"
-                                    },
-                                    "end_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2024-10-03"
-                                    },
-                                    "sort_by": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "example": "temperature"
-                                        }
-                                    },
-                                    "sort_order": {
-                                        "type": "string",
-                                        "example": "asc"
-                                    }
-                                },
-                                "type": "object"
-                            }
+                "description": "Retrieve filtered sensor data based on search criteria and sorting options",
+                "operationId": "filterSensorData",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search string for filtering by date, temperature, humidity, or light",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "25.5"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "sort_order",
+                        "in": "query",
+                        "description": "Sorting order: 'asc' or 'desc'",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ],
+                            "example": "asc"
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Field to sort by: 'received_at', 'temperature', 'humidity', or 'light'",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "received_at"
+                        }
+                    },
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "description": "Field to filter by: 'temperature', 'humidity', 'light', or 'received_at'",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "temperature",
+                                "humidity",
+                                "light",
+                                "received_at"
+                            ],
+                            "example": "temperature"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
-                        "description": "Filtered sensor data",
+                        "description": "Successful operation",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "temperature": {
-                                                "type": "number",
-                                                "example": 22.5
-                                            },
-                                            "humidity": {
-                                                "type": "number",
-                                                "example": 60
-                                            },
-                                            "light": {
-                                                "type": "number",
-                                                "example": 350
-                                            },
-                                            "received_at": {
-                                                "type": "string",
-                                                "example": "2024-10-03T10:00:00"
+                                    "properties": {
+                                        "data": {
+                                            "description": "Filtered sensor data",
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "temperature": {
+                                                        "type": "number",
+                                                        "example": 25.5
+                                                    },
+                                                    "humidity": {
+                                                        "type": "number",
+                                                        "example": 60.3
+                                                    },
+                                                    "light": {
+                                                        "type": "integer",
+                                                        "example": 800
+                                                    },
+                                                    "received_at": {
+                                                        "type": "string",
+                                                        "example": "2023-10-05 12:34:56"
+                                                    }
+                                                },
+                                                "type": "object"
                                             }
                                         },
-                                        "type": "object"
-                                    }
+                                        "pagination": {
+                                            "description": "Pagination details",
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
-                    },
-                    "500": {
-                        "description": "Internal server error"
                     }
                 }
             }
@@ -491,8 +540,8 @@
     },
     "tags": [
         {
-            "name": "Device Control",
-            "description": "Device Control"
+            "name": "Device Controll",
+            "description": "Device Controll"
         },
         {
             "name": "Device History",
