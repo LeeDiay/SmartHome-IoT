@@ -12,11 +12,11 @@
         "/control/toggle-device": {
             "post": {
                 "tags": [
-                    "Device Controll"
+                    "Device Control"
                 ],
                 "summary": "Toggle device status",
-                "description": "Toggle the status of a device.\n\nThis endpoint allows toggling the status of a device (on/off) and sends\na message to the MQTT broker to reflect the updated status.",
-                "operationId": "da3b13632110d68b47522f255780f49d",
+                "description": "Toggle the status of a device (on/off) and publish an MQTT message to update its status.",
+                "operationId": "toggleDevice",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -27,7 +27,7 @@
                                 ],
                                 "properties": {
                                     "device_id": {
-                                        "description": "The ID of the device to toggle",
+                                        "description": "The ID of the device to be toggled",
                                         "type": "integer",
                                         "example": 1
                                     }
@@ -51,15 +51,19 @@
                                         "device": {
                                             "properties": {
                                                 "name": {
+                                                    "description": "Name of the device",
                                                     "type": "string",
                                                     "example": "Quạt"
                                                 },
                                                 "status": {
+                                                    "description": "Current status of the device",
                                                     "type": "boolean",
                                                     "example": true
                                                 },
                                                 "last_toggle_at": {
+                                                    "description": "The last time the device was toggled",
                                                     "type": "string",
+                                                    "format": "date-time",
                                                     "example": "15:32:10 02-10-2024"
                                                 }
                                             },
@@ -111,7 +115,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/device-history": {
@@ -482,8 +491,8 @@
     },
     "tags": [
         {
-            "name": "Device Controll",
-            "description": "Device Controll"
+            "name": "Device Control",
+            "description": "Device Control"
         },
         {
             "name": "Device History",

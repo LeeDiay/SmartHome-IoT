@@ -289,7 +289,7 @@
                 url: '/control/toggle-device',
                 type: 'POST',
                 data: {
-                    _token: '{{ csrf_token() }}',
+                    // _token: '{{ csrf_token() }}',
                     device_id: deviceId,
                     status: newStatus
                 },

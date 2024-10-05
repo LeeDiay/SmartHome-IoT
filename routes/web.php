@@ -63,4 +63,4 @@ Route::get('/device-history', [DeviceHistoryController::class, 'index'])->name('
 
 Route::get('/sensor-data', [SensorDataController::class, 'index'])->name('sensor.data.index');
 Route::get('/sensor-data/latest', [SensorDataController::class, 'getLatestData'])->name('sensor.data.latest');
-Route::post('/sensor-data/filter', [SensorDataController::class, 'filterData'])->name('sensor.data.filter');
+Route::get('/sensor-data/filter', [SensorDataController::class, 'filterData'])->name('sensor.data.filter');

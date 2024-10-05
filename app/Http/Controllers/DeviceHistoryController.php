@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\DeviceToggle; // Model for the device_toggles table
@@ -7,91 +8,97 @@ use Carbon\Carbon;
 
 class DeviceHistoryController extends Controller
 {
-    /**
-     * Display a paginated list of device toggle history records with optional search functionality.
-     * 
-     * This method allows users to view device toggle history and filter by specific date or time.
-     * It supports pagination and searches by exact or partial time matches.
-     *
-     * @OA\Get(
-     *     path="/device-history",
-     *     summary="Get device toggle history",
-     *     tags={"Device History"},
-     *     @OA\Parameter(
-     *         name="page_size",
-     *         in="query",
-     *         description="The number of records to return per page (default is 10)",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="integer",
-     *             example=10
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="search_time",
-     *         in="query",
-     *         description="Search for toggles by date (YYYY-MM-DD), time (HH:MM:SS), or time (HH:MM)",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="2024-10-02"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of device toggle history",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="deviceHistory",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="device_id", type="integer", example=1),
-     *                     @OA\Property(property="device_name", type="string", example="Quạt"),
-     *                     @OA\Property(property="status", type="boolean", example=true),
-     *                     @OA\Property(property="toggled_at", type="string", example="15:32:10 02-10-2024")
-     *                 )
-     *             ),
-     *             @OA\Property(property="pageSize", type="integer", example=10),
-     *             @OA\Property(property="searchTime", type="string", example="2024-10-02")
-     *         )
-     *     )
-     * )
-     * 
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
-     */
     public function index(Request $request)
     {
-        // Get the page size from the request, default is 10
+        // Lấy kích thước trang từ yêu cầu, mặc định là 10
         $pageSize = $request->input('page_size', 10);
         
-        // Get the search time from the request
+        // Lấy thời gian tìm kiếm từ yêu cầu
         $searchTime = $request->input('search_time');
 
-        // Create a query to fetch toggle history from the device_toggles table
+        // Tạo query để lấy lịch sử bật/tắt từ bảng device_toggles
         $query = DeviceToggle::query();
 
-        // Add a time-based search condition if provided
+        // Thêm điều kiện tìm kiếm theo thời gian nếu được cung cấp
         if ($searchTime) {
-            // Check if input is a valid date
-            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $searchTime)) {
-                // If it's a date, fetch all records for that day
-                $startOfDay = Carbon::parse($searchTime)->startOfDay();
-                $endOfDay = Carbon::parse($searchTime)->endOfDay();
-                $query->whereBetween('toggled_at', [$startOfDay, $endOfDay]);
+            // Kiểm tra nếu đầu vào là định dạng DD/MM/YYYY
+            if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $searchTime)) {
+                // Chuyển đổi sang định dạng YYYY-MM-DD
+                $date = Carbon::createFromFormat('d/m/Y', $searchTime);
+                if ($date) {
+                    // Tìm kiếm theo thời gian chính xác
+                    $query->whereDate('toggled_at', $date);
+                }
+            } elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $searchTime)) {
+                // Nếu là định dạng YYYY-MM-DD, tìm kiếm theo thời gian
+                $query->whereDate('toggled_at', $searchTime);
             } elseif (preg_match('/^\d{2}:\d{2}:\d{2}$/', $searchTime)) {
-                // If it's a time in HH:MM:SS, fetch exact matches
+                // Nếu là thời gian HH:MM:SS, tìm các bản ghi chính xác theo thời gian đó
                 $query->where('toggled_at', 'LIKE', '%' . $searchTime . '%');
             } elseif (preg_match('/^\d{2}:\d{2}$/', $searchTime)) {
-                // If it's a time in HH:MM, fetch records with that hour and minute
-                $query->whereTime('toggled_at', Carbon::createFromFormat('H:i', $searchTime));
+                // Nếu là thời gian HH:MM, tìm các bản ghi theo giờ và phút
+                $query->where('toggled_at', 'LIKE', '%' . $searchTime . '%'); // Tìm kiếm theo giờ và phút
+            } elseif (preg_match('/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}(:\d{2})?$/', $searchTime)) {
+                // Nếu là định dạng DD/MM/YYYY HH:MM hoặc DD/MM/YYYY HH:MM:SS
+                $datetime = Carbon::createFromFormat('d/m/Y H:i:s', $searchTime);
+                if (!$datetime) {
+                    $datetime = Carbon::createFromFormat('d/m/Y H:i', $searchTime);
+                }
+                if ($datetime) {
+                    $query->where('toggled_at', 'LIKE', '%' . $datetime->format('Y-m-d H:i') . '%');
+                }
+            } elseif (preg_match('/^\d{2}\/\d{2}$/', $searchTime)) {
+                // Nếu là định dạng DD/MM, chuyển đổi sang tháng năm
+                $monthDay = explode('/', $searchTime);
+                if (count($monthDay) === 2) {
+                    $day = $monthDay[0];
+                    $month = $monthDay[1];
+                    // Lấy năm hiện tại
+                    $currentYear = now()->year;
+                    // Tạo một ngày từ định dạng DD/MM
+                    $date = Carbon::createFromFormat('d/m/Y', "{$day}/{$month}/{$currentYear}");
+                    if ($date) {
+                        // Tìm kiếm theo ngày
+                        $query->whereDate('toggled_at', $date);
+                    }
+                }
             }
         }
 
-        // Sort by the toggled_at column and paginate the results
+        // Sắp xếp theo cột toggled_at và phân trang kết quả
         $deviceHistory = $query->orderBy('toggled_at', 'desc')->paginate($pageSize);
+        
+        // Tính toán ID cho dữ liệu trả về dựa trên trang hiện tại
+        $currentPage = $deviceHistory->currentPage(); // Lấy trang hiện tại
+        $offset = ($currentPage - 1) * $pageSize; // Tính toán độ lệch cho ID
 
-        // Pass the data to the view
+        // Cập nhật ID cho dữ liệu trả về
+        $deviceHistory->getCollection()->transform(function ($item, $key) use ($offset) {
+            // Cập nhật ID thành $key + $offset + 1
+            $item->id = $key + $offset + 1;
+            return $item;
+        });
+
+        // Kiểm tra nếu yêu cầu muốn nhận dữ liệu dưới dạng JSON
+        if ($request->expectsJson()) {
+            // Trả về dữ liệu JSON
+            return response()->json([
+                'deviceHistory' => $deviceHistory->items(), // Trả về tất cả dữ liệu
+                'pagination' => [
+                    'total' => $deviceHistory->total(),
+                    'per_page' => $deviceHistory->perPage(),
+                    'current_page' => $deviceHistory->currentPage(),
+                    'last_page' => $deviceHistory->lastPage(),
+                    'from' => $deviceHistory->firstItem(),
+                    'to' => $deviceHistory->lastItem(),
+                ],
+                'pageSize' => $pageSize,
+                'searchTime' => $searchTime
+            ]);
+        }
+
+        // Nếu không phải JSON, trả về view
         return view('device-history.index', compact('deviceHistory', 'pageSize', 'searchTime'));
     }
+
 }
