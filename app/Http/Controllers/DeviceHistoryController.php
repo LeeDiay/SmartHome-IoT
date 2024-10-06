@@ -42,7 +42,7 @@ class DeviceHistoryController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="string",
-     *             example="01/10/2024"
+     *             example="05/10/2024"
      *         )
      *     ),
      *     @OA\Response(
@@ -55,17 +55,17 @@ class DeviceHistoryController extends Controller
      *                 type="array",
      *                 @OA\Items(
      *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="toggled_at", type="string", example="2023-12-12 15:30:00"),
-     *                     @OA\Property(property="device_name", type="string", example="Light Bulb")
+     *                     @OA\Property(property="toggled_at", type="string", example="2024-10-15 15:30:00"),
+     *                     @OA\Property(property="device_name", type="string", example="Đèn")
      *                 )
      *             ),
      *             @OA\Property(
      *                 property="pagination",
      *                 description="Pagination details",
-     *                 @OA\Property(property="total", type="integer", example=100),
+     *                 @OA\Property(property="total", type="integer", example=1),
      *                 @OA\Property(property="per_page", type="integer", example=10),
      *                 @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="last_page", type="integer", example=10),
+     *                 @OA\Property(property="last_page", type="integer", example=1),
      *                 @OA\Property(property="from", type="integer", example=1),
      *                 @OA\Property(property="to", type="integer", example=10)
      *             )

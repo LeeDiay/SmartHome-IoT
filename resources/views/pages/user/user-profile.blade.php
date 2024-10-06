@@ -33,7 +33,7 @@
                 <div class="row gx-4 mb-2">
                     <div class="mb-3 col-md-4">
                         <label class="form-label">Link Báo cáo</label>
-                        <a href="https://drive.google.com/file/d/14xE_URUkanJiBqTBKtDRhIoWwqPYmIME/view?usp=drive_link" class="form-control border border-2 p-2" target="_blank">
+                        <a href="https://drive.google.com/file/d/1c2A_UEotrUFbrZS1stwRxEMJOdnPRba0/view?usp=sharing" class="form-control border border-2 p-2" target="_blank">
                             Báo cáo BTL IoT nhóm 06
                         </a>
                     </div>

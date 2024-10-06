@@ -26,16 +26,16 @@ Giao diện trang Register Account:
 ![image](https://hackmd.io/_uploads/S1EviH9C0.png)
 
 Giao diện Dashboard:
-![image](https://hackmd.io/_uploads/rJoZvr_CR.png)
+![image](https://hackmd.io/_uploads/rkXnDGlk1g.png)
 
 Giao diện Device History:
-![image](https://hackmd.io/_uploads/By4sYruAR.png)
+![image](https://hackmd.io/_uploads/HJ-TPMx11e.png)
 
 Giao diện Sensor Data History:
-![image](https://hackmd.io/_uploads/BJdTFr_AC.png)
+![image](https://hackmd.io/_uploads/r1YyYMlJ1e.png)
 
 Giao diện My Profile:
-![image](https://hackmd.io/_uploads/r1MxqrOCA.png)
+![image](https://hackmd.io/_uploads/B10eYfgyke.png)
 
 Giao diện Change Password: 
 ![image](https://hackmd.io/_uploads/SJQf9SdR0.png)
@@ -162,3 +162,12 @@ php artisan mqtt:sensor-subscribe
 
 Nếu có bất kì lỗi nào, hãy quan sát file log ***/storage/logs/laravel.log*** trong Laravel để debug!
 
+#### 5. Các tài liệu liên quan:
+
+**Github sourcecode **project**:** [link Github](https://github.com/LeeDiay/SmartHome-IoT) 
+
+**Code Arduinocho ESP32**: [link code ESP](https://github.com/LeeDiay/SmartHome-IoT/blob/main/code_full_with_esp32.ino) 
+
+**Api docs:**   [link API Docs](http://160.30.54.8/swagger-ui/dist/)
+
+**Báo cáo:** [link báo cáo đầy đủ](https://drive.google.com/file/d/1c2A_UEotrUFbrZS1stwRxEMJOdnPRba0/view?usp=sharing)
