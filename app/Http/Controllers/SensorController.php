@@ -14,6 +14,13 @@ class SensorController extends Controller
         // Khởi tạo MQTT client
         $mqtt = new MqttClient(env('MQTT_HOST'), env('MQTT_PORT'), 'LaravelClient' . rand());
 
+        //Nếu thêm gió
+        // $connectionSettings = (new ConnectionSettings)
+        //     // ->setUsername(env('MQTT_USERNAME'))
+        //     // ->setPassword(env('MQTT_PASSWORD'))
+        //     ->setUseTls(false);
+
+        //Nếu không thêm cảm biến gió
         $connectionSettings = (new ConnectionSettings)
             ->setUsername(env('MQTT_USERNAME'))
             ->setPassword(env('MQTT_PASSWORD'))
@@ -54,9 +61,19 @@ class SensorController extends Controller
             $temperature = $data['temperature'] ?? null;
             $humidity = $data['humidity'] ?? null;
             $light = $data['light'] ?? null;
+            $wind = $data['wind'] ?? null;
 
-            // Lưu vào bảng sensor_data_history
-            DB::table('sensor_data_history')->insert([
+            // Thêm gió
+            // DB::table('sensor_data_history')->insert([
+            //     'temperature' => $temperature,
+            //     'humidity' => $humidity,
+            //     'light' => $light,
+            //     'wind' => $wind,
+            //     'received_at' => now(), // Thời gian nhận dữ liệu
+            // ]);
+
+             // Lưu vào bảng sensor_data_history
+             DB::table('sensor_data_history')->insert([
                 'temperature' => $temperature,
                 'humidity' => $humidity,
                 'light' => $light,
@@ -64,6 +81,8 @@ class SensorController extends Controller
             ]);
 
             // Ghi log
+            // thêm gió
+            // \Log::info("Sensor data received: Temperature: $temperature, Humidity: $humidity, Light: $light, Wind: $wind");
             \Log::info("Sensor data received: Temperature: $temperature, Humidity: $humidity, Light: $light");
         } else {
             \Log::error("Invalid sensor data format: $message");

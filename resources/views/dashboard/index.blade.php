@@ -57,6 +57,25 @@
                     </div>
                 </div>
 
+                <!-- Thêm gió
+                
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-xl-0 mb-4">
+                    <div class="card" id="wind-card">
+                        <div class="card-header p-3 pt-2">
+                            <div class="icon icon-lg icon-shape bg-gradient-warning shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                                <i class="material-icons opacity-10">wind_power</i>
+                            </div>
+                            <div class="text-end pt-1">
+                                <p class="text-sm mb-0 text-capitalize">Gió</p>
+                                <h4 class="mb-0" id="wind-value">--</h4>
+                            </div>
+                        </div>
+                        <hr class="dark horizontal my-0">
+                        <div class="card-footer p-3"></div>
+                    </div>
+                </div>
+                <p></p> -->
+
                 <!-- Thời gian thực -->
                 <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 mb-xl-0 mb-4">
                     <div class="card">
@@ -171,7 +190,18 @@
                         tension: 0.4,
                         pointRadius: 4,
                         pointHoverRadius: 6
-                    }
+                    } //thêm dấu , nếu thêm gió
+                    // {
+                    //     label: 'Gió',
+                    //     data: [],
+                    //     borderColor: 'rgba(255, 0, 0, 1)', // Màu đỏ cho đường biên
+                    //     backgroundColor: 'rgba(255, 0, 0, 0.3)', // Màu đỏ với độ trong suốt cho nền
+                    //     borderWidth: 3,
+                    //     fill: true,
+                    //     tension: 0.4,
+                    //     pointRadius: 4,
+                    //     pointHoverRadius: 6
+                    // }
                 ]
             },
             options: {
@@ -239,6 +269,7 @@
                     var temperatureData = [];
                     var humidityData = [];
                     var lightData = [];
+                    // var windData = [];
 
                     // Lặp qua dữ liệu nhận được từ API và đẩy vào các mảng dữ liệu
                     response.data.forEach(function(dataPoint) {
@@ -252,6 +283,7 @@
                         temperatureData.push(dataPoint.temperature);  // Nhiệt độ
                         humidityData.push(dataPoint.humidity);  // Độ ẩm
                         lightData.push(dataPoint.light);  // Ánh sáng
+                        // windData.push(dataPoint.wind);  // Gios
                     });
 
 
@@ -260,6 +292,7 @@
                     environmentChart.data.datasets[0].data = temperatureData;
                     environmentChart.data.datasets[1].data = humidityData;
                     environmentChart.data.datasets[2].data = lightData;
+                    // environmentChart.data.datasets[3].data = windData;
 
                     // Cập nhật lại biểu đồ
                     environmentChart.update();
@@ -458,6 +491,7 @@
                     document.getElementById('temperature-value').innerText = latestData.temperature + '°C';
                     document.getElementById('humidity-value').innerText = parseInt(latestData.humidity) + '%';
                     document.getElementById('light-value').innerText = latestData.light;
+                    // document.getElementById('wind-value').innerText = latestData.wind;
                 }
             })
             .catch(error => console.error('Error fetching sensor data:', error));
@@ -514,6 +548,16 @@
         } else {
             $('#light-card').css('background-color', '#FFFF00');
         }
+
+        // thêm Gio
+        //  var wind = parseInt($('#wind-value').text());
+        // if (wind < 40) {
+        //     $('#wind-card').css('background-color', '#00FFFF');
+        // } else if (wind >= 40 && wind <= 80) {
+        //     $('#wind-card').css('background-color', '#00FF00');
+        // } else {
+        //     $('#wind-card').css('background-color', '#FF0000');
+        // }
     }
 
     // Cập nhật màu mỗi khi trang được tải
