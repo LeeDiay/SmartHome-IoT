@@ -35,6 +35,7 @@ Giao diện Sensor Data History:
 ![image](https://hackmd.io/_uploads/r1YyYMlJ1e.png)
 
 Giao diện My Profile:
+
 ![image](https://hackmd.io/_uploads/B10eYfgyke.png)
 
 Giao diện Change Password: 
