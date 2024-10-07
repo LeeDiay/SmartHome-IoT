@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SensorDataHistory;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class SensorDataController extends Controller
 {
@@ -262,11 +263,30 @@ class SensorDataController extends Controller
         // Áp dụng bộ lọc tìm kiếm nếu có
         if ($searchString) {
             $query->where(function ($q) use ($searchString) {
-                $q->where('received_at', 'like', '%' . $searchString . '%')
-                ->orWhere('temperature', 'like', '%' . $searchString . '%')
-                ->orWhere('humidity', 'like', '%' . $searchString . '%')
-                ->orWhere('light', 'like', '%' . $searchString . '%');
-            });
+                // Chuyển đổi chuỗi tìm kiếm thành định dạng Carbon nếu có thể
+                try {
+                    // Kiểm tra định dạng thời gian
+                    $dateTime = Carbon::createFromFormat('H:i:s d/m/Y', $searchString);
+                    // Nếu thành công, thêm điều kiện cho trường received_at
+                    if ($dateTime) {
+                        $q->orWhere('received_at', '=', $dateTime);
+                    }
+                } catch (\Exception $e) {
+                    // Nếu không thành công, kiểm tra xem có thể là ngày không
+                    try {
+                        $date = Carbon::createFromFormat('d/m/Y', $searchString);
+                        // Nếu thành công, thêm điều kiện cho trường received_at (bỏ qua thời gian)
+                        if ($date) {
+                            $q->orWhereDate('received_at', '=', $date);
+                        }
+                    } catch (\Exception $e) {
+                        $q->where('received_at', 'like', '%' . $searchString . '%')
+                        ->orWhere('temperature', 'like', '%' . $searchString . '%')
+                        ->orWhere('humidity', 'like', '%' . $searchString . '%')
+                        ->orWhere('light', 'like', '%' . $searchString . '%');
+                    }
+                }
+            });  
         }
 
         // Lấy thông tin sắp xếp

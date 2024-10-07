@@ -13,10 +13,19 @@
                             <div class="d-flex align-items-center">
                                 <!-- Ô nhập với icon tìm kiếm và padding cho phần nhập -->
                                 <div class="input-group me-2">
-                                    <!-- <span class="input-group-text">
-                                        <span class="material-icons">search</span>
-                                    </span> -->
                                     <input type="text" id="search" class="form-control border border-dark" placeholder="Nhập chuỗi tìm kiếm" onkeypress="if(event.key === 'Enter'){ applyFilter(); }" style="padding-left: 10px;">
+                                </div>
+
+                                <!-- Chọn kích thước trang -->
+                                <div class="d-flex align-items-center justify-content-end px-4 mb-2">
+                                    <div class="styled-select-wrapper">
+                                        <select name="pageSize" id="pageSize" class="form-select styled-select w-auto" onchange="applyFilter()">
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <!-- Nút Lọc với icon filter -->
@@ -63,16 +72,6 @@
                                                 </select>
                                             </div>
 
-                                            <!-- Page size selection -->
-                                            <div class="mb-3">
-                                                <label for="pageSize" class="form-label">Chọn kích thước trang</label>
-                                                <select name="pageSize" id="pageSize" class="form-select styled-select">
-                                                    <option value="10">10</option>
-                                                    <option value="20">20</option>
-                                                    <option value="50">50</option>
-                                                    <option value="100">100</option>
-                                                </select>
-                                            </div>
 
                                             <!-- Submit button inside modal -->
                                             <div class="modal-footer">
@@ -133,7 +132,7 @@
             const filter = document.getElementById('filter').value;
             const sortOrder = document.getElementById('sort').value || 'desc';
             const pageSize = document.getElementById('pageSize').value;
-            
+
             const queryString = `?page=${page}&pageSize=${pageSize}&search=${search}&filter=${filter}&sort_order=${sortOrder}`;
             const response = await fetch(`/sensor-data/filter${queryString}`, {
                 headers: { 'Accept': 'application/json' }
@@ -141,52 +140,63 @@
             const data = await response.json();
 
             const tableBody = document.getElementById('table-body');
-            tableBody.innerHTML = '';
+            tableBody.innerHTML = ''; // Xóa nội dung bảng hiện tại
 
-            data.data.forEach((entry, index) => {
+            // Kiểm tra xem có dữ liệu hay không
+            if (data.data.length === 0) {
                 const row = document.createElement('tr');
-
                 row.innerHTML = `
-                    <td>
-                        <div class="d-flex px-2 py-1">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm" style="padding-left: 10px;">${data.from + index}</h6>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex px-2 py-1">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm">${entry.temperature}°C</h6>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">${entry.humidity}%</h6>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">${entry.light}</h6>
-                        </div>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                        <p class="text-xs text-secondary mb-0">
-                            ${new Date(entry.received_at).toLocaleString('vi-VN', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit',
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric',
-                            })}
-                        </p>
+                    <td colspan="5" class="text-center">
+                        <h6 class="mb-0 text-sm">Không tìm thấy dữ liệu</h6>
                     </td>
                 `;
-
                 tableBody.appendChild(row);
-            });
+            } else {
+                data.data.forEach((entry, index) => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm" style="padding-left: 10px;">${data.from + index}</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${entry.temperature}°C</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">${entry.humidity}%</h6>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">${entry.light}</h6>
+                            </div>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                            <p class="text-xs text-secondary mb-0">
+                                ${new Date(entry.received_at).toLocaleString('vi-VN', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric',
+                                })}
+                            </p>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            }
 
             // Update pagination links
             updatePagination(data);
@@ -194,6 +204,7 @@
             console.error('Error fetching sensor data:', error);
         }
     }
+
 
     // Function to update pagination links using Bootstrap 4
     function updatePagination(data) {
