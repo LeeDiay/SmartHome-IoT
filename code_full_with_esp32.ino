@@ -19,10 +19,11 @@ DHT dht(DHTPIN, DHTTYPE);
 
 #define LDR_PIN 34         // Chân kết nối LDR (analog pin)
 
-// Định nghĩa chân cho 3 đèn LED
+// Định nghĩa chân cho 4 đèn LED
 #define LED1_PIN 22
 #define LED2_PIN 23
 #define LED3_PIN 21
+#define WARNING_LED_PIN 19  // Chân kết nối đèn cảnh báo
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -123,6 +124,7 @@ void publishSensorData() {
   float humidity = dht.readHumidity();
   float temperature = dht.readTemperature();
   int lightLevel = analogRead(LDR_PIN); // Đọc giá trị LDR
+  int wind = random(0, 101); // Sinh giá trị ngẫu nhiên cho gió (từ 0 đến 100)
 
   // Kiểm tra xem có đọc dữ liệu thành công không
   if (isnan(humidity) || isnan(temperature)) {
@@ -133,20 +135,32 @@ void publishSensorData() {
   // Tạo JSON payload
   String payload = String("{\"temperature\":") + temperature +
                    ",\"humidity\":" + humidity +
-                   ",\"light\":" + (4095-lightLevel) + "}";
+                   ",\"light\":" + (4095 - lightLevel) +
+                   ",\"wind\":" + wind + "}";
 
   // Gửi dữ liệu lên MQTT
   client.publish("home/sensor_data", payload.c_str());
   Serial.println("Published: " + payload);
+
+  // Nháy đèn cảnh báo nếu giá trị gió > 80
+  if (wind > 60) {
+    digitalWrite(WARNING_LED_PIN, HIGH); // Bật đèn cảnh báo
+    delay(500); // Để đèn sáng trong 500ms
+    digitalWrite(WARNING_LED_PIN, LOW); // Tắt đèn cảnh báo
+    delay(500); // Để đèn tắt trong 500ms
+  } else {
+    digitalWrite(WARNING_LED_PIN, LOW); // Tắt đèn cảnh báo nếu gió ≤ 80
+  }
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   // Khởi tạo chân LED là output
   pinMode(LED1_PIN, OUTPUT);
   pinMode(LED2_PIN, OUTPUT);
   pinMode(LED3_PIN, OUTPUT);
+  pinMode(WARNING_LED_PIN, OUTPUT); // Khởi tạo chân đèn cảnh báo
 
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);
@@ -160,7 +174,7 @@ void loop() {
   
   client.loop();
 
-  // Gửi dữ liệu cảm biến mỗi 10 giây
+  // Gửi dữ liệu cảm biến mỗi 2 giây
   static unsigned long lastPublish = 0;
   if (millis() - lastPublish > 2000) {
     lastPublish = millis();

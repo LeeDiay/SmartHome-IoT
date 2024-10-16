@@ -61,8 +61,11 @@ Route::post('/control/toggle-device', [ControlController::class, 'toggleDevice']
 
 // Route for get device toggle history
 Route::get('/device-history', [DeviceHistoryController::class, 'index'])->name('device-history.index');
+Route::get('/control/toggle-count', [ControlController::class, 'getToggleCount']);
+
 
 // Route for handle data sensor
 Route::get('/sensor-data', [SensorDataController::class, 'index'])->name('sensor.data.index');
 Route::get('/sensor-data/latest', [SensorDataController::class, 'getLatestData'])->name('sensor.data.latest');
 Route::get('/sensor-data/filter', [SensorDataController::class, 'filterData'])->name('sensor.data.filter');
+Route::get('/count-high-wind', [SensorDataController::class, 'countHighWind']);

@@ -9,6 +9,10 @@
                         <div class="d-flex justify-content-between align-items-center p-3">
                             <h6 class="mb-0">Bảng theo dõi các giá trị môi trường</h6>
                             <!-- Thêm link đến Material Icons -->
+                            <div class="me-3">
+                                <label for="wind-count" class="form-label mb-0 me-2">Số lần bật tắt CB gió:</label>
+                                <span class="font-weight-bold" id="wind-count">0</span>
+                            </div>
                             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
                             <div class="d-flex align-items-center">
                                 <!-- Ô nhập với icon tìm kiếm và padding cho phần nhập -->
@@ -58,6 +62,7 @@
                                                     <option value="temperature">Nhiệt độ</option>
                                                     <option value="humidity">Độ ẩm</option>
                                                     <option value="light">Ánh sáng</option>
+                                                    <option value="wind">Gió</option>
                                                     <option value="received_at">Thời gian</option>
                                                 </select>
                                             </div>
@@ -93,6 +98,7 @@
                                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">NHIỆT ĐỘ</th>
                                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ĐỘ ẨM</th>
                                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ÁNH SÁNG</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">GIÓ</th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">THỜI GIAN</th>
                                         </tr>
                                     </thead>
@@ -146,7 +152,7 @@
             if (data.data.length === 0) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td colspan="5" class="text-center">
+                    <td colspan="6" class="text-center">
                         <h6 class="mb-0 text-sm">Không tìm thấy dữ liệu</h6>
                     </td>
                 `;
@@ -178,6 +184,11 @@
                         <td>
                             <div class="d-flex flex-column justify-content-center">
                                 <h6 class="mb-0 text-sm">${entry.light}</h6>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">${entry.wind}</h6>
                             </div>
                         </td>
                         <td class="align-middle text-center text-sm">
@@ -286,7 +297,35 @@
     document.addEventListener('DOMContentLoaded', () => {
         fetchSensorData();
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    fetchWindCount();
+     // Gọi fetchWindCount mỗi 2 giây (2000 milliseconds)
+     setInterval(fetchWindCount, 2000);
+    function fetchWindCount() {
+            fetch('/count-high-wind') 
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Cập nhật số lần gió mạnh vào phần tử HTML
+                        document.getElementById('wind-count').innerText = data.data.high_wind_count;
+                    } else {
+                        console.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+    });
+
 </script>
+
 <!-- Simple CSS for prettier dropdown -->
 <style>
     .styled-select {

@@ -265,36 +265,56 @@ class SensorDataController extends Controller
             $query->where(function ($q) use ($searchString) {
                 // Chuyển đổi chuỗi tìm kiếm thành định dạng Carbon nếu có thể
                 try {
-                    // Kiểm tra định dạng thời gian
-                    $dateTime = Carbon::createFromFormat('H:i:s d/m/Y', $searchString);
+                    // Kiểm tra định dạng thời gian có giây
+                    $dateTimeWithSeconds = Carbon::createFromFormat('H:i:s d/m/Y', $searchString);
                     // Nếu thành công, thêm điều kiện cho trường received_at
-                    if ($dateTime) {
-                        $q->orWhere('received_at', '=', $dateTime);
+                    if ($dateTimeWithSeconds) {
+                        $q->orWhere('received_at', '=', $dateTimeWithSeconds);
                     }
                 } catch (\Exception $e) {
-                    // Nếu không thành công, kiểm tra xem có thể là ngày không
+                    // Nếu không thành công, thử kiểm tra định dạng thời gian không có giây
                     try {
-                        $date = Carbon::createFromFormat('d/m/Y', $searchString);
-                        // Nếu thành công, thêm điều kiện cho trường received_at (bỏ qua thời gian)
-                        if ($date) {
-                            $q->orWhereDate('received_at', '=', $date);
+                        $dateTimeWithoutSeconds = Carbon::createFromFormat('H:i d/m/Y', $searchString);
+                        // Nếu thành công, lọc theo giờ và phút
+                        if ($dateTimeWithoutSeconds) {
+                            $hour = $dateTimeWithoutSeconds->format('H');
+                            $minute = $dateTimeWithoutSeconds->format('i');
+                            $date = $dateTimeWithoutSeconds->format('Y-m-d');
+                            
+                            // Tìm tất cả các bản ghi có cùng ngày, giờ và phút
+                            $q->orWhereDate('received_at', '=', $date)
+                            ->whereTime('received_at', '>=', "$hour:$minute:00")
+                            ->whereTime('received_at', '<=', "$hour:$minute:59");
                         }
                     } catch (\Exception $e) {
-                        $q->where('received_at', 'like', '%' . $searchString . '%')
-                        ->orWhere('temperature', 'like', '%' . $searchString . '%')
-                        ->orWhere('humidity', 'like', '%' . $searchString . '%')
-                        ->orWhere('light', 'like', '%' . $searchString . '%');
+                        // Nếu không phải định dạng thời gian, kiểm tra xem có phải định dạng ngày không
+                        try {
+                            $date = Carbon::createFromFormat('d/m/Y', $searchString);
+                            // Nếu thành công, thêm điều kiện cho trường received_at (chỉ ngày)
+                            if ($date) {
+                                $q->orWhereDate('received_at', '=', $date);
+                            }
+                        } catch (\Exception $e) {
+                            // Nếu không phải định dạng ngày, tìm kiếm trong các trường khác
+                            $q->where('received_at', 'like', '%' . $searchString . '%')
+                            ->orWhere('temperature', 'like', '%' . $searchString . '%')
+                            ->orWhere('humidity', 'like', '%' . $searchString . '%')
+                            ->orWhere('light', 'like', '%' . $searchString . '%')
+                            ->orWhere('wind', 'like', '%' . $searchString . '%');
+                        }
                     }
                 }
-            });  
+            });
         }
+
+
 
         // Lấy thông tin sắp xếp
         $sortOrder = $request->input('sort_order', 'asc');
         $sortBy = $request->input('sort_by', 'received_at');
         
         // Kiểm tra nếu có filter cụ thể và không có input tìm kiếm
-        if ($request->filled('filter') && in_array($request->input('filter'), ['temperature', 'humidity', 'light', 'received_at'])) {
+        if ($request->filled('filter') && in_array($request->input('filter'), ['temperature', 'humidity', 'light', 'wind', 'received_at'])) {
             $filterBy = $request->input('filter');
 
             // Nếu không có searchString, lọc theo filter
@@ -312,4 +332,27 @@ class SensorDataController extends Controller
         return response()->json($sensorData);
     }
     
+    public function countHighWind()
+    {
+        try {
+            // Đếm số lần gió > 80 trong model SensorDataHistory
+            $highWindCount = SensorDataHistory::where('wind', '>', 80)->count();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'high_wind_count' => $highWindCount,
+                ],
+            ], 200);
+
+        } catch (\Exception $e) {
+            \Log::error("Error counting high wind occurrences: " . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to count high wind occurrences',
+            ], 500);
+        }
+    }
+        
 }
+

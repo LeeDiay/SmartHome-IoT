@@ -61,18 +61,9 @@ class ControlController extends Controller
     {
         $device = Device::find($request->device_id);
         if ($device) {
-            // Lưu trạng thái mới
+            // Lưu trạng thái mới của thiết bị
             $device->status = !$device->status;
             $device->last_toggled_at = now();
-            $device->save();
-
-            //Tạo mới 1 bản ghi vào lịch sử bật/tắt
-            DeviceToggle::create([
-                'device_id' => $device->id,
-                'device_name' => $device->name,
-                'status' => $device->status,
-                'toggled_at' => now(),
-            ]);
 
             // Khởi tạo kết nối MQTT
             $mqtt = new MqttClient(env('MQTT_HOST'), env('MQTT_PORT'), 'LaravelClient' . rand());
@@ -95,6 +86,17 @@ class ControlController extends Controller
 
                 if (!$mqtt->publish($topic, $message, 0)) {
                     \Log::info("Message published to $topic: " . $message);
+
+                    // Lưu thay đổi trạng thái sau khi publish thành công
+                    $device->save();
+
+                    // Tạo mới 1 bản ghi vào lịch sử bật/tắt sau khi gửi thành công MQTT message
+                    DeviceToggle::create([
+                        'device_id' => $device->id,
+                        'device_name' => $device->name,
+                        'status' => $device->status,
+                        'toggled_at' => now(),
+                    ]);
                 } else {
                     \Log::error("Failed to publish message to $topic");
                     return response()->json([
@@ -112,6 +114,7 @@ class ControlController extends Controller
                 ], 500);
             }
 
+            // Trả về phản hồi thành công sau khi cập nhật và lưu lịch sử
             return response()->json([
                 'status' => 'success',
                 'device' => [
@@ -127,4 +130,30 @@ class ControlController extends Controller
             'message' => 'Device not found'
         ], 404);
     }
+
+
+    public function getToggleCount()
+    {
+        try {
+            // Đếm tổng số lần bật/tắt của thiết bị có device_name là "nhập vào"
+            // $totalToggleCount = DeviceToggle::where('device_name', 'Điều hòa')->count();
+
+            //Đếm số lần tắt của thiết bị
+            $totalToggleCount = DeviceToggle::where('device_name', 'Điều hòa')
+                                  ->where('status', 0) // Điều kiện để đếm số lần tắt
+                                  ->count();
+
+            return response()->json([
+                'status' => 'success',
+                'total_toggle_count' => $totalToggleCount,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("Error retrieving toggle count for fan: " . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve toggle count for fan'
+            ], 500);
+        }
+    }
+
 }

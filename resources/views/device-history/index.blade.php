@@ -10,6 +10,10 @@
                     <div class="card-header p-3 d-flex justify-content-between align-items-center">
                         <h6 class="font-weight-bold">Lịch sử bật/tắt thiết bị</h6>
                         <div class="d-flex align-items-center">
+                            <!-- <div class="me-3">
+                                <label for="toggle-count" class="form-label mb-0 me-2">Số lần bật tắt của:</label>
+                                <span class="font-weight-bold" id="toggle-count">0</span>
+                            </div> -->
                             <form id="search-form" class="mb-0 me-3">
                                 <div class="d-flex align-items-center">
                                     <input type="text" name="search_time" id="search_time" class="form-control border border-dark me-2" style="padding-left: 10px;" placeholder="Nhập từ khóa tìm kiếm">
@@ -211,4 +215,30 @@
     function changePage(page) {
         fetchDeviceHistory(page);
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchToggleCount();
+        
+        function fetchToggleCount() {
+            fetch('/control/toggle-count') 
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Cập nhật số lần bật/tắt vào phần tử HTML
+                        document.getElementById('toggle-count').innerText = data.total_toggle_count;
+                    } else {
+                        console.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+    });
+
 </script>

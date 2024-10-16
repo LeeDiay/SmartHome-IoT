@@ -91,6 +91,7 @@ class DeviceHistoryController extends Controller
         // Lọc kết quả theo chuỗi search
         if ($searchTime) {
             $valid = false;
+        
             // Kiểm tra nếu đầu vào là định dạng DD/MM/YYYY
             if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $searchTime)) {
                 $date = Carbon::createFromFormat('d/m/Y', $searchTime);
@@ -99,22 +100,36 @@ class DeviceHistoryController extends Controller
                     $valid = true;
                 }
             } elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $searchTime)) {
-                 // Nếu là định dạng YYYY-MM-DD, tìm kiếm theo thời gian
+                // Nếu là định dạng YYYY-MM-DD, tìm kiếm theo thời gian
                 $query->whereDate('toggled_at', $searchTime);
                 $valid = true;
             } elseif (preg_match('/^\d{2}:\d{2}:\d{2}$/', $searchTime)) {
-                 // Nếu là thời gian HH:MM:SS, tìm các bản ghi chính xác theo thời gian đó
+                // Nếu là thời gian HH:MM:SS, tìm các bản ghi chính xác theo thời gian đó
                 $query->where('toggled_at', 'LIKE', '%' . $searchTime . '%');
                 $valid = true;
             } elseif (preg_match('/^\d{2}:\d{2}$/', $searchTime)) {
-                 // Nếu là thời gian HH:MM, tìm các bản ghi theo giờ và phút
+                // Nếu là thời gian HH:MM, tìm các bản ghi theo giờ và phút
                 $query->where('toggled_at', 'LIKE', '%' . $searchTime . '%');
                 $valid = true;
             } elseif (preg_match('/^\d{2}:\d{2}:\d{2} \d{2}\/\d{2}\/\d{4}$/', $searchTime)) {
-                 // Nếu là định dạng H:i:s d/m/Y
+                // Nếu là định dạng H:i:s d/m/Y
                 $datetime = Carbon::createFromFormat('H:i:s d/m/Y', $searchTime);
                 if ($datetime) {
                     $query->where('toggled_at', '=', $datetime);
+                    $valid = true;
+                }
+            } elseif (preg_match('/^\d{2}:\d{2} \d{2}\/\d{2}\/\d{4}$/', $searchTime)) {
+                // Nếu là định dạng H:i d/m/Y (thêm mới)
+                $dateTimeWithoutSeconds = Carbon::createFromFormat('H:i d/m/Y', $searchTime);
+                if ($dateTimeWithoutSeconds) {
+                    $hour = $dateTimeWithoutSeconds->format('H');
+                    $minute = $dateTimeWithoutSeconds->format('i');
+                    $date = $dateTimeWithoutSeconds->format('Y-m-d');
+        
+                    // Tìm tất cả các bản ghi có cùng ngày, giờ và phút
+                    $query->orWhereDate('toggled_at', '=', $date)
+                        ->whereTime('toggled_at', '>=', "$hour:$minute:00")
+                        ->whereTime('toggled_at', '<=', "$hour:$minute:59");
                     $valid = true;
                 }
             } elseif (preg_match('/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}(:\d{2})?$/', $searchTime)) {
@@ -145,7 +160,7 @@ class DeviceHistoryController extends Controller
             if (!$valid) {
                 $query->whereRaw('1 = 0'); // Điều kiện luôn sai để trả về 0 kết quả
             }
-        }
+        }        
         
 
         // Sắp xếp theo cột toggled_at và phân trang kết quả

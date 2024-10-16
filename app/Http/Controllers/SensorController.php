@@ -63,27 +63,27 @@ class SensorController extends Controller
             $light = $data['light'] ?? null;
             $wind = $data['wind'] ?? null;
 
-            // Thêm gió
-            // DB::table('sensor_data_history')->insert([
-            //     'temperature' => $temperature,
-            //     'humidity' => $humidity,
-            //     'light' => $light,
-            //     'wind' => $wind,
-            //     'received_at' => now(), // Thời gian nhận dữ liệu
-            // ]);
-
-             // Lưu vào bảng sensor_data_history
-             DB::table('sensor_data_history')->insert([
+            //thêm gió
+            DB::table('sensor_data_history')->insert([
                 'temperature' => $temperature,
                 'humidity' => $humidity,
                 'light' => $light,
+                'wind' => $wind,
                 'received_at' => now(), // Thời gian nhận dữ liệu
             ]);
 
+             // Lưu vào bảng sensor_data_history
+            //  DB::table('sensor_data_history')->insert([
+            //     'temperature' => $temperature,
+            //     'humidity' => $humidity,
+            //     'light' => $light,
+            //     'received_at' => now(), // Thời gian nhận dữ liệu
+            // ]);
+
             // Ghi log
             // thêm gió
-            // \Log::info("Sensor data received: Temperature: $temperature, Humidity: $humidity, Light: $light, Wind: $wind");
-            \Log::info("Sensor data received: Temperature: $temperature, Humidity: $humidity, Light: $light");
+            \Log::info("Sensor data received: Temperature: $temperature, Humidity: $humidity, Light: $light, Wind: $wind");
+            // \Log::info("Sensor data received: Temperature: $temperature, Humidity: $humidity, Light: $light");
         } else {
             \Log::error("Invalid sensor data format: $message");
         }
